@@ -1,0 +1,10 @@
+title 0.6: Uusi muistiinpano
+
+note over Selain: Käyttäjä painaa 'Save' SPA-versiossa
+note over Selain: Lomakkeen attribuuteista luodaan JSON-objekti
+note over Selain: JSON-objekti lisätään paikalliseen listaan ja muistiinpanot piirretään uudestaan
+note over Selain: sendToServer-funktiossa lähetetään JSON-merkkijonona data palvelimelle
+Selain -> Palvelin: HTTP POST /exampleapp/new_note_spa
+Selain --> Palvelin: {"content":jotain,"date":aika}
+Palvelin --> Selain: {"message":"note created"}
+note over Selain: Statuskoodi 201, konsoliin kirjataan vastaus "note created"
