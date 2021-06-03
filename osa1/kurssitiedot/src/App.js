@@ -1,7 +1,6 @@
 import React from 'react'
 
 const Header = (props) => {
-  console.log(props)
   return (
     <h1>{props.course}</h1>
   )
@@ -10,9 +9,9 @@ const Header = (props) => {
 const Content = (props) => {
   return (
     <div>
-      <Part part={props.part1} />
-      <Part part={props.part2} />
-      <Part part={props.part3} />
+      <Part part={props.parts[0]} />
+      <Part part={props.parts[1]} />
+      <Part part={props.parts[2]} />
     </div>
   )
 }
@@ -51,15 +50,12 @@ const App = () => {
     }
   ]
 
-  const numofexercises = part1.exercises + part2.exercises + part3.exercises
+  const numofexercises = parts.reduce(function(accumulator, object) {return accumulator + object.exercises}, 0)
 
   return (
     <div>
       <Header course={course} />
-      <Content part1={part1}
-        part2={part2}
-        part3={part3}
-        />
+      <Content parts={parts} />
       <Total numofexercises={numofexercises} />
     </div>
   )
