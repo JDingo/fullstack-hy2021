@@ -2,18 +2,6 @@ import React, { useState } from 'react'
 
 const Header = ({ text }) => ( <h1>{text}</h1> )
 
-const Button = ({ feedbackType, feedbackFunction, text }) => {
-  return (
-    <button onClick={() => incrementByOne(feedbackType, feedbackFunction)}>
-      {text}
-    </button>
-  )
-}
-
-const Total = ({ total, text }) => ( <p>{text} {total}</p> )
-
-const incrementByOne = (feedbackType, feedbackFunction) => feedbackFunction(feedbackType + 1)
-
 const Statistics = ({ good, neutral, bad }) => {
   const total = good + neutral + bad
   const average = (good - bad) / total
@@ -21,9 +9,13 @@ const Statistics = ({ good, neutral, bad }) => {
 
   return (
     <>
+      <p>Good {good}</p>
+      <p>Neutral {neutral}</p>
+      <p>Bad {bad}</p>
+
       <p>All {total}</p>
       <p>Average {average}</p>
-      <p>positive {positive} %</p>
+      <p>Positive {positive} %</p>
     </>
   )
 }
@@ -38,16 +30,17 @@ const App = () => {
     <div>
       <Header text='Give feedback' />
       <div>
-        <Button text='Good' feedbackType={good} feedbackFunction={setGood} />
-        <Button text='Neutral' feedbackType={neutral} feedbackFunction={setNeutral} />
-        <Button text='Bad' feedbackType={bad} feedbackFunction={setBad} />
+        <button onClick={() => setGood(good + 1)}>
+          Good
+        </button>
+        <button onClick={() => setNeutral(neutral + 1)}>
+          Neutral
+        </button>
+        <button onClick={() => setBad(bad + 1)}>
+          Bad
+        </button>
       </div>
       <Header text='Statistics' />
-      <div>
-        <Total total={good} text='Good' />
-        <Total total={neutral} text='Neutral' />
-        <Total total={bad} text='Bad' />
-      </div>
       <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   )
