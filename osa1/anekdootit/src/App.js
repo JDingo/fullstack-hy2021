@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
 
+const getRandomInt = () => {
+  return Math.floor(Math.random() * 6)
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -15,7 +19,12 @@ const App = () => {
 
   return (
     <div>
-      {anecdotes[selected]}
+      <div>
+        {anecdotes[selected]}
+      </div>
+      <div>
+        <button onClick={() => setSelected(getRandomInt)}>Next anecdote</button>
+      </div>
     </div>
   )
 }
