@@ -1,17 +1,17 @@
 import React from 'react'
 
-const Header = (props) => {
+const Header = ({ course }) => {
   return (
-    <h1>{props.course.name}</h1>
+    <h1>{course.name}</h1>
   )
 }
 
-const Content = (props) => {
+const Content = ({ course }) => {
   return (
     <div>
-      <Part part={props.course.parts[0]} />
-      <Part part={props.course.parts[1]} />
-      <Part part={props.course.parts[2]} />
+      {course.parts.map(part => 
+        <Part part={part} key={part.id} />
+      )}
     </div>
   )
 }
@@ -26,39 +26,49 @@ const Total = (props) => {
   )
 }
 
-const Part = (props) => {
+const Part = ({ part }) => {
   return (
     <p>
-      {props.part.name} {props.part.exercises}
+      {part.name} {part.exercises}
     </p>
   )
 }
 
+const Course = ({ course }) => {
+  return (
+    <>
+      <Header course={course} />
+      <Content course={course} />
+    </>
+  )
+}
 
 const App = () => {
   const course = {
     name: 'Half Stack application development',
+    id: 1,
     parts: [
       {
-        name: 'Fundementals of React',
-        exercises: 10
+        name: 'Fundamentals of React',
+        exercises: 10,
+        id: 1
       },
       {
         name: 'Using props to pass data',
-        exercises: 7
+        exercises: 7,
+        id: 2
       },
       {
         name: 'State of a component',
-        exercises: 14
+        exercises: 14,
+        id: 3
       }
     ]
   }
 
   return (
     <div>
-      <Header course={course} />
-      <Content course={course} />
-      <Total course={course} />
+      <Course course={course} />
     </div>
   )
 }
