@@ -1,5 +1,51 @@
 import React, { useState } from 'react'
 
+const Filter = ({ value, onChange }) => {
+  return (
+    <div>
+      Filter: <input
+        value={value}
+        onChange={onChange}
+      />
+    </div>
+  )
+}
+
+const Form = (props) => {
+  return (
+    <div>
+      <form onSubmit={props.submit}>
+        <div>
+          Name: <input
+            value={props.nameValue}
+            onChange={props.nameChange}
+          />
+        </div>
+        <div>
+          Number: <input
+            value={props.numberValue}
+            onChange={props.numberChage}
+          />
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+    </div>
+  )
+}
+
+const Persons = ({ searchFilter, currentList }) => {
+  const entriesToShow = searchFilter.trim() === ''
+    ? currentList
+    : currentList.filter(person =>
+      person.name.toLowerCase().includes(searchFilter.toLowerCase()))
+
+  return (
+    entriesToShow.map(person => <p key={person.name}>{person.name} {person.number}</p>)
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456' },
@@ -8,16 +54,16 @@ const App = () => {
     { name: 'Mary Poppendieck', number: '39-23-6423122' }
   ])
 
-  const [ newName, setNewName ] = useState('')
-  const [ newNumber, setNewNumber] = useState('')
-  const [ searchFilter, setSearchFilter] = useState('')
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+  const [searchFilter, setSearchFilter] = useState('')
 
   const addPerson = (event) => {
     event.preventDefault()
 
     const checkExistingPerson = persons.find(person => person.name === newName)
 
-    if(checkExistingPerson !== undefined) {
+    if (checkExistingPerson !== undefined) {
       window.alert(`${newName} is already added to phonebook.`)
 
     } else {
@@ -28,11 +74,10 @@ const App = () => {
       const copy = [...persons]
       copy.push(newPerson)
       setPersons(copy)
-
     }
   }
 
-  const handlePersonChange = (event) => {
+  const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
 
@@ -44,46 +89,24 @@ const App = () => {
     setSearchFilter(event.target.value)
   }
 
-  const entriesToShow = searchFilter.trim() === '' 
-  ? persons 
-  : persons.filter(person => 
-    person.name.toLowerCase().includes(searchFilter.toLowerCase()))
-
   return (
     <div>
       <h2>Phonebook</h2>
+
       <h3>Search</h3>
-        <div>
-          Filter: <input
-            value={searchFilter}
-            onChange={handleSearchChange}
-            />
-        </div>
+      <Filter value={searchFilter} onChange={handleSearchChange} />
+
       <h3>Add new entry</h3>
-      <form onSubmit={addPerson}>
-        <div>
-          Name: <input 
-              value={newName}
-              onChange={handlePersonChange}  
-            />
-        </div>
-        <div>
-          Number: <input 
-              value={newNumber}
-              onChange={handleNumberChange}  
-            />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Form 
+        nameValue={newName} nameChange={handleNameChange}
+        numberValue={newNumber} numberChage={handleNumberChange}
+        submit={addPerson}
+      />
+
       <h3>Numbers</h3>
-      <div>
-        {entriesToShow.map(person => <p key={person.name}>{person.name} {person.number}</p>)}
-      </div>
+      <Persons searchFilter={searchFilter} currentList={persons}/>
     </div>
   )
-
 }
 
 export default App
