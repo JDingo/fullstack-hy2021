@@ -8,13 +8,21 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-    const newPerson = {
-      name: newName
-    }
 
-    const copy = [...persons]
-    copy.push(newPerson)
-    setPersons(copy)
+    const checkExistingPerson = persons.find(person => person.name === newName)
+
+    if(checkExistingPerson !== undefined) {
+      window.alert(`${newName} is already added to phonebook.`)
+
+    } else {
+      const newPerson = {
+        name: newName
+      }
+      const copy = [...persons]
+      copy.push(newPerson)
+      setPersons(copy)
+
+    }
   }
 
   const handlePersonChange = (event) => {
