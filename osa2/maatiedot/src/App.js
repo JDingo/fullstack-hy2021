@@ -12,14 +12,6 @@ const Filter = ({ value, onChange }) => {
   )
 }
 
-const ShowButton = ({ searchwordFunction }) => {
-  return (
-    <button onClick={searchwordFunction}>
-      show
-    </button>
-  )
-}
-
 const CountryList = ({ countryList, searchword, searchwordFunction }) => {
   const matching = countryList.filter(country => country.name.toLowerCase().includes(searchword.toLowerCase()))
 
@@ -49,8 +41,21 @@ const CountryList = ({ countryList, searchword, searchwordFunction }) => {
 }
 
 const CountryInfoPanel = ({ country }) => {
-  return (
-    <div>
+  const [weatherData, setWeatherData] = useState(null)
+  const [loadingState, setLoadingState] = useState(false)
+
+  useEffect(() => {
+    axios
+      .get(`https://api.openweathermap.org/data/2.5/weather?q=${country.capital}&units=metric&appid=${process.env.REACT_APP_API_KEY}`)
+      .then(response => {
+        setWeatherData(response)
+        setLoadingState(true)
+      })
+  }, [country])
+
+  if (loadingState) {
+    return (
+      <div>
       <h1>{country.name}</h1>
       <p>Capital: {country.capital}</p>
       <p>Population: {country.population}</p>
@@ -60,8 +65,37 @@ const CountryInfoPanel = ({ country }) => {
           <li key={language.name}>{language.name}</li>)}
       </ul>
       <img src={country.flag} height={'128px'} alt={'Flag'}></img>
-    </div>
-  )
+      <h2>Weather in {country.name}</h2>
+      <div>
+        <b>Temperature: </b> <span>{weatherData.data.main.temp} °C</span>
+      </div>
+      <div>
+        <b>Humidity: </b> <span>{weatherData.data.main.humidity} %</span>
+      </div>
+      <div>
+        <b>Weather: </b> <span>{weatherData.data.weather[0].description}</span>
+      </div>
+      <div>
+        <b>Wind: </b> <span>{weatherData.data.wind.speed} m/s {weatherData.data.wind.deg}°</span>
+      </div>
+    </div> 
+    )
+  }
+  else {
+    return (
+      <div>
+        <h1>{country.name}</h1>
+        <p>Capital: {country.capital}</p>
+        <p>Population: {country.population}</p>
+        <h2>Languages</h2>
+        <ul>
+          {country.languages.map(language => 
+            <li key={language.name}>{language.name}</li>)}
+        </ul>
+        <img src={country.flag} height={'128px'} alt={'Flag'}></img>
+      </div>
+    )
+  }
 }
 
 const App = () => {
@@ -70,7 +104,6 @@ const App = () => {
   const [loadingIndicator, setLoadingIndicator] = useState('')
 
   const showCountry = (event) => {
-    console.log(event.target.dataset.country)
     setSearchword(event.target.dataset.country)
   }
 
