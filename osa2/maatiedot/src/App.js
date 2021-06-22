@@ -12,7 +12,15 @@ const Filter = ({ value, onChange }) => {
   )
 }
 
-const CountryList = ({ countryList, searchword }) => {
+const ShowButton = ({ searchwordFunction }) => {
+  return (
+    <button onClick={searchwordFunction}>
+      show
+    </button>
+  )
+}
+
+const CountryList = ({ countryList, searchword, searchwordFunction }) => {
   const matching = countryList.filter(country => country.name.toLowerCase().includes(searchword.toLowerCase()))
 
   if (matching.length > 10) {
@@ -29,7 +37,11 @@ const CountryList = ({ countryList, searchword }) => {
     return (
       <div>
         <ul>
-          {matching.map(country => <li key={country.name}>{country.name}</li>)}
+          {matching.map(country =>
+              <li key={country.alpha3Code}>
+                {country.name} <button key={country.name} data-country={country.name} onClick={searchwordFunction}>show</button>
+              </li>
+          )}
         </ul>
       </div>
     )
@@ -44,7 +56,8 @@ const CountryInfoPanel = ({ country }) => {
       <p>Population: {country.population}</p>
       <h2>Languages</h2>
       <ul>
-        {country.languages.map(language => <li key={language.name}>{language.name}</li>)}
+        {country.languages.map(language => 
+          <li key={language.name}>{language.name}</li>)}
       </ul>
       <img src={country.flag} height={'128px'} alt={'Flag'}></img>
     </div>
@@ -55,6 +68,11 @@ const App = () => {
   const [searchword, setSearchword] = useState('')
   const [countries, setCountries] = useState([])
   const [loadingIndicator, setLoadingIndicator] = useState('')
+
+  const showCountry = (event) => {
+    console.log(event.target.dataset.country)
+    setSearchword(event.target.dataset.country)
+  }
 
   const handleSearchwordChange = (event) => {
     setSearchword(event.target.value)
@@ -72,8 +90,8 @@ const App = () => {
 
   return (
     <div className="App">
-      <Filter value={searchword} onChange={handleSearchwordChange} />
-      <CountryList countryList={countries} searchword={searchword} />
+      <Filter value={searchword} onChange={handleSearchwordChange}/>
+      <CountryList countryList={countries} searchword={searchword} searchwordFunction={showCountry}/>
       <p>{loadingIndicator}</p>
     </div>
   );
