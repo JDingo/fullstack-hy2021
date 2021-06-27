@@ -62,14 +62,22 @@ const App = () => {
       })
   }, [])
 
+  const updateEntries = () => {
+    personService
+      .getAll()
+      .then(response => {
+        setPersons(response.data)
+      })
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
 
     const checkExistingPerson = persons.find(person => person.name === newName)
 
     if (checkExistingPerson !== undefined) {
-      window.alert(`${newName} is already added to phonebook.`)
-
+      console.log(checkExistingPerson)
+      changePerson(checkExistingPerson)
     } else {
       const newPerson = {
         name: newName,
@@ -86,16 +94,22 @@ const App = () => {
     }
   }
 
+  const changePerson = (person) => {
+    if (window.confirm(`${person.name} is already added to phonebook. Replace the old number with the new one?`)) {
+      personService
+        .change(person, newNumber)
+        .then(() =>
+          updateEntries()
+        )
+    }
+  }
+
   const deletePerson = (event) => {
-    if(window.confirm(`Delete ${event.target.name}?`)) {
+    if (window.confirm(`Delete ${event.target.name}?`)) {
       personService
         .deleteEntry(event.target.id)
-        .then(response => {
-          personService
-            .getAll()
-            .then(response => {
-              setPersons(response.data)
-          })
+        .then(() => {
+          updateEntries()
         })
     }
   }
@@ -120,14 +134,14 @@ const App = () => {
       <Filter value={searchFilter} onChange={handleSearchChange} />
 
       <h3>Add new entry</h3>
-      <Form 
+      <Form
         nameValue={newName} nameChange={handleNameChange}
         numberValue={newNumber} numberChage={handleNumberChange}
         submit={addPerson}
       />
 
       <h3>Numbers</h3>
-      <Persons searchFilter={searchFilter} currentList={persons} deletePerson={deletePerson}/>
+      <Persons searchFilter={searchFilter} currentList={persons} deletePerson={deletePerson} />
     </div>
   )
 }
