@@ -36,14 +36,15 @@ const Form = (props) => {
   )
 }
 
-const Persons = ({ searchFilter, currentList }) => {
+const Persons = ({ searchFilter, currentList, deletePerson }) => {
   const entriesToShow = searchFilter.trim() === ''
     ? currentList
     : currentList.filter(person =>
       person.name.toLowerCase().includes(searchFilter.toLowerCase()))
 
   return (
-    entriesToShow.map(person => <p key={person.name}>{person.name} {person.number}</p>)
+    entriesToShow.map(person =>
+      <p key={person.name}>{person.name} {person.number} <button name={person.name} id={person.id} key={person.id} onClick={deletePerson}>Delete</button></p>)
   )
 }
 
@@ -58,7 +59,6 @@ const App = () => {
       .getAll()
       .then(response => {
         setPersons(response.data)
-        console.log(response.data)
       })
   }, [])
 
@@ -82,6 +82,20 @@ const App = () => {
           setNewName('')
           setNewNumber('')
           setPersons(persons.concat(response.data))
+        })
+    }
+  }
+
+  const deletePerson = (event) => {
+    if(window.confirm(`Delete ${event.target.name}?`)) {
+      personService
+        .deleteEntry(event.target.id)
+        .then(response => {
+          personService
+            .getAll()
+            .then(response => {
+              setPersons(response.data)
+          })
         })
     }
   }
@@ -113,7 +127,7 @@ const App = () => {
       />
 
       <h3>Numbers</h3>
-      <Persons searchFilter={searchFilter} currentList={persons}/>
+      <Persons searchFilter={searchFilter} currentList={persons} deletePerson={deletePerson}/>
     </div>
   )
 }
