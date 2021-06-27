@@ -54,11 +54,11 @@ const App = () => {
   const [searchFilter, setSearchFilter] = useState('')
 
   useEffect(() => {
-    console.log('effect')
     axios
       .get('http://localhost:3001/persons')
       .then(response => {
         setPersons(response.data)
+        console.log(response.data)
       })
   }, [])
 
@@ -75,9 +75,14 @@ const App = () => {
         name: newName,
         number: newNumber
       }
-      const copy = [...persons]
-      copy.push(newPerson)
-      setPersons(copy)
+
+      axios
+        .post('http://localhost:3001/persons', newPerson)
+        .then(response => {
+          setNewName('')
+          setNewNumber('')
+          setPersons(persons.concat(response.data))
+        })
     }
   }
 
