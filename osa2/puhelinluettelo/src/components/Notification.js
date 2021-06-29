@@ -13,7 +13,7 @@ const Notification = ({ message, operationSuccess }) => {
     }
 
     const errorStyle = {
-        background: 'red'
+        background: 'LightCoral'
     }
 
     if (message === null) {

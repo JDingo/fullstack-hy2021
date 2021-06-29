@@ -60,8 +60,10 @@ const App = () => {
           }, 5000)
         })
         .catch(() => {
+          updateEntries()
+          
           setMessage(
-            `Error!`
+            `Adding person '${newName}' failed.`
           )
           setMessageState(false)
           setTimeout(() => {
@@ -91,8 +93,10 @@ const App = () => {
           }, 5000)
         })
         .catch(() => {
+          updateEntries()
+          
           setMessage(
-            `Error!`
+            `Information of '${newName}' cannot be found in the phonebook.`
           )
           setMessageState(false)
           setTimeout(() => {
@@ -120,8 +124,10 @@ const App = () => {
           }, 5000)
         })
         .catch(() => {
+          updateEntries()
+
           setMessage(
-            `Error!`
+            `Information of '${event.target.name}' cannot be found in the phonebook or was already removed.`
           )
           setMessageState(false)
           setTimeout(() => {
