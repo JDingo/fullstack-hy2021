@@ -3,12 +3,15 @@ import personService from './services/persons'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
 import Form from './components/Form'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchFilter, setSearchFilter] = useState('')
+  const [message, setMessage] = useState(null)
+  const [messageState, setMessageState] = useState(null)
 
   useEffect(() => {
     personService
@@ -46,6 +49,25 @@ const App = () => {
           setNewName('')
           setNewNumber('')
           setPersons(persons.concat(response.data))
+
+          setMessage(
+            `Person '${newName}' was added to the phonebook.`
+          )
+          setMessageState(true)
+          setTimeout(() => {
+            setMessage(null)
+            setMessageState(null)
+          }, 5000)
+        })
+        .catch(() => {
+          setMessage(
+            `Error!`
+          )
+          setMessageState(false)
+          setTimeout(() => {
+            setMessage(null)
+            setMessageState(null)
+          }, 5000)
         })
     }
   }
@@ -56,6 +78,27 @@ const App = () => {
         .change(person, newNumber)
         .then(() => {
           updateEntries()
+          setNewName('')
+          setNewNumber('')
+
+          setMessage(
+            `Person's '${newName}' number was changed to '${newNumber}'.`
+          )
+          setMessageState(true)
+          setTimeout(() => {
+            setMessage(null)
+            setMessageState(null)
+          }, 5000)
+        })
+        .catch(() => {
+          setMessage(
+            `Error!`
+          )
+          setMessageState(false)
+          setTimeout(() => {
+            setMessage(null)
+            setMessageState(null)
+          }, 5000)
         })
     }
   }
@@ -66,6 +109,25 @@ const App = () => {
         .deleteEntry(event.target.id)
         .then(() => {
           updateEntries()
+
+          setMessage(
+            `Person '${event.target.name}' was deleted from the phonebook.`
+          )
+          setMessageState(true)
+          setTimeout(() => {
+            setMessage(null)
+            setMessageState(null)
+          }, 5000)
+        })
+        .catch(() => {
+          setMessage(
+            `Error!`
+          )
+          setMessageState(false)
+          setTimeout(() => {
+            setMessage(null)
+            setMessageState(null)
+          }, 5000)
         })
     }
   }
@@ -84,7 +146,8 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+      <Notification message={message} operationSuccess={messageState}/>
 
       <h3>Search</h3>
       <Filter value={searchFilter} onChange={handleSearchChange} />
