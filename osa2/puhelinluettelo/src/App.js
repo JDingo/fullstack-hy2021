@@ -59,11 +59,11 @@ const App = () => {
             setMessageState(null)
           }, 5000)
         })
-        .catch(() => {
+        .catch(error => {
           updateEntries()
           
           setMessage(
-            `Adding person '${newName}' failed.`
+            error.response.data.error
           )
           setMessageState(false)
           setTimeout(() => {
