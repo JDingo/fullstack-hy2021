@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "Kissablogi",
+    "author": "Kissa Kallu",
+    "url": "kissa.fi",
+    "likes": 1000
+}
