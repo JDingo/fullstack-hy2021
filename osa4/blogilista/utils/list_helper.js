@@ -26,8 +26,25 @@ const favouriteBlog = (blogs) => {
     return blogs.reduce(reducer)
 }
 
+const mostBlogs = (blogs) => {
+    const blogsByAuthor = lodash.countBy(blogs, 'author')
+
+    let currentAuthor = ''
+    let currentAmount = 0;
+
+    for (const author in blogsByAuthor) {
+        if (blogsByAuthor[author] > currentAmount) {
+            currentAuthor = author
+            currentAmount = blogsByAuthor[author]
+        }
+    }
+
+    return { author: currentAuthor, blogs: currentAmount }
+}
+
 module.exports = {
     dummy,
     totalLikes,
-    favouriteBlog
+    favouriteBlog,
+    mostBlogs
 }
