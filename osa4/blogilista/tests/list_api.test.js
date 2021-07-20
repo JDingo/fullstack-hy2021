@@ -54,6 +54,24 @@ describe('post', () => {
         delete response.body[response.body.length - 1].id
         expect(response.body).toContainEqual(newBlog)
     })
+
+    test('blog with undefined likes defaults to zero', async () => {
+        const newBlog = {
+            title: 'Test Blog',
+            author: 'Tester',
+            url: 'test.test',
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
+        const response = await api.get('/api/blogs')
+        const addedBlog = response.body[response.body.length - 1]
+        expect(addedBlog.likes).toBe(0)  
+    })
 })
 
 afterAll(() => {
