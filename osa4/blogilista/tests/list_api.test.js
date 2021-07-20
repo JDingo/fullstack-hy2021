@@ -104,10 +104,35 @@ describe('when there are some intial blogs', () => {
 
             expect(blogsAfterDelete).toHaveLength(helper.initialList.length - 1)
 
-            const blogs = blogsAfterDelete.map(blog => delete blog.id)
+            blogsAfterDelete.forEach(blog => delete blog.id)
             delete blogToDelete.id
 
-            expect(blogs).not.toContainEqual(blogToDelete)
+            expect(blogsAfterDelete).not.toContainEqual(blogToDelete)
+        })
+    })
+
+    describe('updating a blog', () => {
+        test('update every property of a blog', async () => {
+            const blogsBeforeUpdate = await helper.blogsInDb()
+            const blogToUpdate = blogsBeforeUpdate[0]
+
+            const updatedBlog = {
+                title: 'Test Blog',
+                author: 'Tester',
+                url: 'test.test',
+                likes: 1
+            }
+
+            await api
+                .put(`/api/blogs/${blogToUpdate.id}`)
+                .send(updatedBlog)
+                .expect(200)
+
+            const blogsAfterUpdate = await helper.blogsInDb()
+
+            blogsAfterUpdate.forEach(blog => delete blog.id)
+
+            expect(blogsAfterUpdate).toContainEqual(updatedBlog)
         })
     })
 })
