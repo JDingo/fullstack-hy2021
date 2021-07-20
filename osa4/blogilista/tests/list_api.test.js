@@ -12,17 +12,25 @@ beforeEach(async () => {
     await Blog.insertMany(helper.initialList)
 })
 
-test('all blogs as JSON', async () => {
-    await api
-        .get('/api/blogs')
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
-})
+describe('get', () => {
+    test('all blogs as JSON', async () => {
+        await api
+            .get('/api/blogs')
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+    })
 
-test('correct amount of blogs', async () => {
-    const response = await api.get('/api/blogs')
+    test('correct amount of blogs', async () => {
+        const response = await api.get('/api/blogs')
 
-    expect(response.body).toHaveLength(helper.initialList.length)
+        expect(response.body).toHaveLength(helper.initialList.length)
+    })
+
+    test('every blog with an id field', async () => {
+        const response = await api.get('/api/blogs')
+
+        response.body.forEach(blog => expect(blog.id).toBeDefined())
+    })
 })
 
 afterAll(() => {
