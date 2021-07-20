@@ -6,83 +6,109 @@ const app = require('../app')
 const api = supertest(app)
 
 const Blog = require('../models/blog')
+const blog = require('../models/blog')
+const { ServerResponse } = require('http')
 
-beforeEach(async () => {
-    await Blog.deleteMany({})
-    await Blog.insertMany(helper.initialList)
-})
+describe('when there are some intial blogs', () => {
 
-describe('get', () => {
-    test('all blogs as JSON', async () => {
-        await api
-            .get('/api/blogs')
-            .expect(200)
-            .expect('Content-Type', /application\/json/)
+    beforeEach(async () => {
+        await Blog.deleteMany({})
+        await Blog.insertMany(helper.initialList)
     })
 
-    test('correct amount of blogs', async () => {
-        const response = await api.get('/api/blogs')
+    describe('get', () => {
+        test('all blogs as JSON', async () => {
+            await api
+                .get('/api/blogs')
+                .expect(200)
+                .expect('Content-Type', /application\/json/)
+        })
 
-        expect(response.body).toHaveLength(helper.initialList.length)
+        test('correct amount of blogs', async () => {
+            const response = await helper.blogsInDb()
+
+            expect(response).toHaveLength(helper.initialList.length)
+        })
+
+        test('and check id field for every blog', async () => {
+            const response = await helper.blogsInDb()
+
+            response.forEach(blog => expect(blog.id).toBeDefined())
+        })
     })
 
-    test('every blog with an id field', async () => {
-        const response = await api.get('/api/blogs')
+    describe('posting a new blog', () => {
+        test('new blog and check length and correctness of added blog', async () => {
+            const newBlog = {
+                title: 'Test Blog',
+                author: 'Tester',
+                url: 'test.test',
+                likes: 1
+            }
 
-        response.body.forEach(blog => expect(blog.id).toBeDefined())
+            await api
+                .post('/api/blogs')
+                .send(newBlog)
+                .expect(200)
+                .expect('Content-Type', /application\/json/)
+
+            const response = await helper.blogsInDb()
+            expect(response).toHaveLength(helper.initialList.length + 1)
+
+            delete response[response.length - 1].id
+            expect(response).toContainEqual(newBlog)
+        })
+
+        test('blog with undefined likes defaults to zero', async () => {
+            const newBlog = {
+                title: 'Test Blog',
+                author: 'Tester',
+                url: 'test.test',
+            }
+
+            await api
+                .post('/api/blogs')
+                .send(newBlog)
+                .expect(200)
+                .expect('Content-Type', /application\/json/)
+
+            const response = await helper.blogsInDb()
+            const addedBlog = response[response.length - 1]
+            expect(addedBlog.likes).toBe(0)  
+        })
+
+        test('invalid blog and return status code 400', async () => {
+            const invalidBlog = {
+                url: 'test.test',
+                likes: 0
+            }
+
+            await api
+                .post('/api/blogs')
+                .send(invalidBlog)
+                .expect(400)
+        })
     })
-})
 
-describe('post', () => {
-    test('new blog, check length and correctness of added blog', async () => {
-        const newBlog = {
-            title: 'Test Blog',
-            author: 'Tester',
-            url: 'test.test',
-            likes: 1
-        }
+    describe('deleting a blog', () => {
+        test('delete a blog', async () => {
+            const response = await helper.blogsInDb()
 
-        await api
-            .post('/api/blogs')
-            .send(newBlog)
-            .expect(200)
-            .expect('Content-Type', /application\/json/)
+            const blogToDelete = response[0]
 
-        const response = await api.get('/api/blogs')
-        expect(response.body).toHaveLength(helper.initialList.length + 1)
+            await api
+                .delete(`/api/blogs/${blogToDelete.id}`)
+                .expect(204)
 
-        delete response.body[response.body.length - 1].id
-        expect(response.body).toContainEqual(newBlog)
-    })
+            const blogsAfterDelete = await helper.blogsInDb()
 
-    test('blog with undefined likes defaults to zero', async () => {
-        const newBlog = {
-            title: 'Test Blog',
-            author: 'Tester',
-            url: 'test.test',
-        }
+            expect(blogsAfterDelete).toHaveLength(helper.initialList.length - 1)
 
-        await api
-            .post('/api/blogs')
-            .send(newBlog)
-            .expect(200)
-            .expect('Content-Type', /application\/json/)
+            const blogs = blogsAfterDelete.map(blog => delete blog.id)
+            delete blogToDelete.id
 
-        const response = await api.get('/api/blogs')
-        const addedBlog = response.body[response.body.length - 1]
-        expect(addedBlog.likes).toBe(0)  
-    })
-
-    test('invalid blog and return status code 400', async () => {
-        const invalidBlog = {
-            url: 'test.test',
-            likes: 0
-        }
-
-        await api
-            .post('/api/blogs')
-            .send(invalidBlog)
-            .expect(400)
+            expect(blogs).not.toContainEqual(blogToDelete)
+        })
     })
 })
 
