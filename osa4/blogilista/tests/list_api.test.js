@@ -72,6 +72,18 @@ describe('post', () => {
         const addedBlog = response.body[response.body.length - 1]
         expect(addedBlog.likes).toBe(0)  
     })
+
+    test('invalid blog and return status code 400', async () => {
+        const invalidBlog = {
+            url: 'test.test',
+            likes: 0
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(invalidBlog)
+            .expect(400)
+    })
 })
 
 afterAll(() => {
