@@ -61,7 +61,6 @@ const listWithManyBlogs = [
         likes: 5000,
         __v: 0
     },
-    ,
     {
         _id: '60eb9df50d364c3c2814ca79',
         title: 'Kissablogi 3',
@@ -90,14 +89,17 @@ describe('favourite blog', () => {
     test('when the most liked count is 5123', () => {
         expect(listHelper.favouriteBlog(listWithManyBlogs)).toEqual(listWithManyBlogs[3])
     })
-
-    
 })
 
 describe('most prolific author', () => {
     test('when the cat has written 3', () => {
         expect(listHelper.mostBlogs(listWithManyBlogs)).toEqual({ author: 'Kissa Kallu', blogs: 3})
     })
+ 
+})
 
-    
+describe('author with most likes', () => {
+    test('is Kissa Kallu with 6000 likes', () => {
+        expect(listHelper.mostLikes(listWithManyBlogs)).toEqual({ author: 'Kissa Kallu', likes: 6000})
+    })
 })

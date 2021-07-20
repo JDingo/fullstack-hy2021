@@ -42,9 +42,31 @@ const mostBlogs = (blogs) => {
     return { author: currentAuthor, blogs: currentAmount }
 }
 
+const mostLikes = (blogs) => {
+    const blogsByAuthor = lodash.groupBy(blogs, 'author')
+
+    const reducer = (likesAccumulator, currentBlog) => {
+        return likesAccumulator + currentBlog.likes
+    }
+
+    for (const author in blogsByAuthor) {
+        blogsByAuthor[author] = blogsByAuthor[author].reduce(reducer, 0)
+    }
+
+    const list = []
+    for (const author in blogsByAuthor) {
+        blogsByAuthor[author] = list.push(({ 'author': author, 'likes': blogsByAuthor[author] }))
+    }
+
+    const sorted = lodash.orderBy(list, 'likes', 'desc')
+
+    return sorted[0]
+}
+
 module.exports = {
     dummy,
     totalLikes,
     favouriteBlog,
-    mostBlogs
+    mostBlogs,
+    mostLikes
 }
