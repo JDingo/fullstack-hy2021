@@ -1,10 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ildhc2QiLCJpZCI6IjYwZjgyYzNhY2Q0YWY3M2RlNDBhYjMwMCIsImlhdCI6MTYyNjg3NzczMH0.QLSl2ZZr0zFuX5F40PFs-dG1D8s4IF7ielq5i4zEUDo
 
 {
-    "title": "Kissa",
-    "author": "Kissa Kala",
-    "url": "kissa.fi",
-    "likes": 55,
-    "userId": "60f817b0e8be7402206c3a86"
+    "title": "Kala",
+    "author": "Kala Kalkkuna",
+    "url": "kala.fi",
+    "likes": 401
 }
