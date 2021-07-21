@@ -176,6 +176,69 @@ describe('when there are some initial users', () => {
         expect(usernames).toContain(newUser.username)
     })
 
+    test('creation fails with proper statuscode and message if username already taken', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const existingUser = {
+            username: 'testuser',
+            name: 'tester',
+            password: 'test'
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(existingUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        expect(result.body.error).toContain('username already exists')
+
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+    })
+
+    test('creation fails with proper statuscode and message if password is too short', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const invalidUser = {
+            username: 'asda',
+            name: 'asda',
+            password: 'a'
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(invalidUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        expect(result.body.error).toContain('minimum length for password is 3')
+
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+    })
+
+    test('creation fails with proper statuscode and message if username is too short', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const invalidUser = {
+            username: 'a',
+            name: 'asda',
+            password: 'asda'
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(invalidUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        expect(result.body.error).toContain('minimum length for username is 3')
+
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+    })
+
 })
 
 afterAll(() => {
