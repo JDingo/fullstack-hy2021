@@ -2,8 +2,9 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-    "title": "Kissablogi",
-    "author": "Kissa Kallu",
+    "title": "Kissa",
+    "author": "Kissa Kala",
     "url": "kissa.fi",
-    "likes": 1000
+    "likes": 55,
+    "userId": "60f817b0e8be7402206c3a86"
 }
