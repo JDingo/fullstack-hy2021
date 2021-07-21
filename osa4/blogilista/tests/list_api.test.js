@@ -6,8 +6,9 @@ const app = require('../app')
 const api = supertest(app)
 
 const Blog = require('../models/blog')
-const blog = require('../models/blog')
-const { ServerResponse } = require('http')
+const User = require('../models/user')
+const bcrypt = require('bcrypt')
+
 
 describe('when there are some intial blogs', () => {
 
@@ -135,6 +136,46 @@ describe('when there are some intial blogs', () => {
             expect(blogsAfterUpdate).toContainEqual(updatedBlog)
         })
     })
+})
+
+describe('when there are some initial users', () => {
+
+    beforeEach(async () => {
+        await User.deleteMany({})
+
+        const passwordHash = await bcrypt.hash('test', 10)
+
+        const testUser = new User({
+            username: 'testuser',
+            name: 'tester',
+            passwordHash
+        })
+
+        await testUser.save()
+    })
+
+    test('creation succeeds with a fresh username', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'newUser',
+            name: 'New',
+            password: 'new'
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+
+        const usernames = usersAtEnd.map(user => user.username)
+        expect(usernames).toContain(newUser.username)
+    })
+
 })
 
 afterAll(() => {
