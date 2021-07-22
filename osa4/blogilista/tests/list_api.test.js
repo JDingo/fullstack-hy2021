@@ -8,6 +8,7 @@ const api = supertest(app)
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 
 describe('when there are some intial blogs', () => {
@@ -15,6 +16,18 @@ describe('when there are some intial blogs', () => {
     beforeEach(async () => {
         await Blog.deleteMany({})
         await Blog.insertMany(helper.initialList)
+
+        await User.deleteMany({})
+
+        const passwordHash = await bcrypt.hash('test', 10)
+
+        const testUser = new User({
+            username: 'testuser',
+            name: 'tester',
+            passwordHash
+        })
+
+        await testUser.save()
     })
 
     describe('get', () => {
@@ -38,6 +51,18 @@ describe('when there are some intial blogs', () => {
         })
     })
 
+    const getAuthAndUserId = async () => {
+        const response = await api
+            .post('/api/login')
+            .send({ username: 'testuser', password: 'test' })
+
+        const user = jwt.verify(response.body.token, process.env.SECRET)
+        const userId = user.id
+        const auth = `Bearer ${response.body.token}`
+
+        return ({ auth, userId })
+    }
+
     describe('posting a new blog', () => {
         test('new blog and check length and correctness of added blog', async () => {
             const newBlog = {
@@ -47,17 +72,29 @@ describe('when there are some intial blogs', () => {
                 likes: 1
             }
 
+            const authAndId = await getAuthAndUserId()
+
             await api
                 .post('/api/blogs')
                 .send(newBlog)
+                .set('Authorization', authAndId.auth)
                 .expect(200)
                 .expect('Content-Type', /application\/json/)
 
             const response = await helper.blogsInDb()
             expect(response).toHaveLength(helper.initialList.length + 1)
 
+            const expectedNewBlog = {
+                title: 'Test Blog',
+                author: 'Tester',
+                url: 'test.test',
+                likes: 1,
+                user: authAndId.userId
+            }
+
             delete response[response.length - 1].id
-            expect(response).toContainEqual(newBlog)
+            response[response.length - 1].user = response[response.length - 1].user.toString()
+            expect(response).toContainEqual(expectedNewBlog)
         })
 
         test('blog with undefined likes defaults to zero', async () => {
@@ -67,9 +104,12 @@ describe('when there are some intial blogs', () => {
                 url: 'test.test',
             }
 
+            const authAndId = await getAuthAndUserId()
+
             await api
                 .post('/api/blogs')
                 .send(newBlog)
+                .set('Authorization', authAndId.auth)
                 .expect(200)
                 .expect('Content-Type', /application\/json/)
 
@@ -84,26 +124,61 @@ describe('when there are some intial blogs', () => {
                 likes: 0
             }
 
+            const authAndId = await getAuthAndUserId()
+
             await api
                 .post('/api/blogs')
                 .send(invalidBlog)
+                .set('Authorization', authAndId.auth)
                 .expect(400)
+        })
+
+        test('valid blog without token and return status code 401', async () => {
+            const newBlog = {
+                title: 'Test Blog',
+                author: 'Tester',
+                url: 'test.test',
+                likes: 1
+            }
+
+            await api
+                .post('/api/blogs')
+                .send(newBlog)
+                .expect(401)
+                .expect('Content-Type', /application\/json/)
         })
     })
 
     describe('deleting a blog', () => {
-        test('delete a blog', async () => {
+        test('delete a blog with corresponding token', async () => {
+            const newBlog = {
+                title: 'Test Blog',
+                author: 'Tester',
+                url: 'test.test',
+                likes: 1
+            }
+
+            const authAndId = await getAuthAndUserId()
+
+            await api
+                .post('/api/blogs')
+                .send(newBlog)
+                .set('Authorization', authAndId.auth)
+                .expect(200)
+                .expect('Content-Type', /application\/json/)
+
             const response = await helper.blogsInDb()
 
-            const blogToDelete = response[0]
+            const blogToDelete = response[response.length - 1]
 
             await api
                 .delete(`/api/blogs/${blogToDelete.id}`)
+                .set('Authorization', authAndId.auth)
                 .expect(204)
 
             const blogsAfterDelete = await helper.blogsInDb()
 
-            expect(blogsAfterDelete).toHaveLength(helper.initialList.length - 1)
+            expect(blogsAfterDelete).toHaveLength(helper.initialList.length)
 
             blogsAfterDelete.forEach(blog => delete blog.id)
             delete blogToDelete.id
