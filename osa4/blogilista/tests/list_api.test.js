@@ -30,7 +30,7 @@ describe('when there are some intial blogs', () => {
         await testUser.save()
     })
 
-    describe('get', () => {
+    describe('getting the blogs', () => {
         test('all blogs as JSON', async () => {
             await api
                 .get('/api/blogs')
@@ -133,7 +133,7 @@ describe('when there are some intial blogs', () => {
                 .expect(400)
         })
 
-        test('valid blog without token and return status code 401', async () => {
+        test('valid blog without token and return statuscode 401', async () => {
             const newBlog = {
                 title: 'Test Blog',
                 author: 'Tester',
@@ -184,6 +184,36 @@ describe('when there are some intial blogs', () => {
             delete blogToDelete.id
 
             expect(blogsAfterDelete).not.toContainEqual(blogToDelete)
+        })
+
+        test('deleting a blog with incorrect token fails with proper statuscode', async () => {
+            const newBlog = {
+                title: 'Test Blog',
+                author: 'Tester',
+                url: 'test.test',
+                likes: 1
+            }
+
+            const authAndId = await getAuthAndUserId()
+
+            await api
+                .post('/api/blogs')
+                .send(newBlog)
+                .set('Authorization', authAndId.auth)
+                .expect(200)
+                .expect('Content-Type', /application\/json/)
+
+            const response = await helper.blogsInDb()
+            const blogToDelete = response[response.length - 1]
+
+            await api
+                .delete(`/api/blogs/${blogToDelete.id}`)
+                .set('Authorization', "test")
+                .expect(401)
+
+            const blogsAfterDelete = await helper.blogsInDb()
+
+            expect(blogsAfterDelete).toHaveLength(helper.initialList.length + 1)
         })
     })
 
@@ -266,7 +296,7 @@ describe('when there are some initial users', () => {
             .expect(400)
             .expect('Content-Type', /application\/json/)
 
-        expect(result.body.error).toContain('username already exists')
+        expect(result.body.error).toContain('User validation failed')
 
         const usersAtEnd = await helper.usersInDb()
         expect(usersAtEnd).toHaveLength(usersAtStart.length)

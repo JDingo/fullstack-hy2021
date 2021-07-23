@@ -6,11 +6,11 @@ usersRouter.post('/', async (request, response) => {
     const body = request.body
 
     if (body.password.length < 3) {
-        return response.status(400).json({ 
+        return response.status(400).json({
             error: 'minimum length for password is 3'
         })
     } else if (body.username.length < 3) {
-        return response.status(400).json({ 
+        return response.status(400).json({
             error: 'minimum length for username is 3'
         })
     }
@@ -24,20 +24,14 @@ usersRouter.post('/', async (request, response) => {
         passwordHash
     })
 
-    try {
-        const savedUser = await user.save()
-        response.json(savedUser)
-    } catch (exception) {
-        response.status(400).json({ 
-            error: 'username already exists'
-        })
-    }
+    const savedUser = await user.save()
+    response.json(savedUser)
 })
 
 usersRouter.get('/', async (request, response) => {
     const users = await User
         .find({})
-        .populate('blogs', { title: 1, author: 1, url: 1, id: 1})
+        .populate('blogs', { title: 1, author: 1, url: 1, id: 1 })
 
     response.json(users.map(user => user.toJSON()))
 })
