@@ -21,7 +21,7 @@ const App = () => {
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
-  const [message, setMessage] = useState(null)
+  const [message, setMessage] = useState({ message: null, type: null })
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -55,9 +55,9 @@ const App = () => {
       setPassword('')
 
     } catch (exception) {
-      setMessage('Wrong credentials')
+      setMessage({ message: 'Wrong credentials', type: 'error' })
       setTimeout(() => {
-        setMessage(null)
+        setMessage({ message: null, type: null })
       }, 5000)
     }
   }
@@ -106,15 +106,15 @@ const App = () => {
       setAuthor('')
       setUrl('')
 
-      setMessage(`A new blog ${title} by ${author} added.`)
+      setMessage({ message: `A new blog ${title} by ${author} added.`, type: 'success' })
       setTimeout(() => {
-        setMessage(null)
+        setMessage({ message: null, type: null })
       }, 5000)
 
     } catch (exception) {
-      setMessage('Adding blog failed')
+      setMessage({ message: 'Adding blog failed', type: 'error' })
       setTimeout(() => {
-        setMessage(null)
+        setMessage({ message: null, type: null })
       }, 5000)
     }
   }
@@ -123,7 +123,7 @@ const App = () => {
     <div>
       {user === null ?
       <div>
-        <Notification message={message} />
+        <Notification message={message.message} type={message.type}/>
         <LoginForm
           handleLogin={handleLogin}
           username={username}
@@ -134,7 +134,7 @@ const App = () => {
         </div>
         :
         <div>
-          <Notification message={message} />
+          <Notification message={message.message} type={message.type}/>
           <BlogForm
             addBlog={addBlog}
             blogValueAndHandlers={
