@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import '../index.css'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, handleLike }) => {
   const [visible, setVisible] = useState(false)
 
   const toggleVisibility = () => {
@@ -22,7 +22,7 @@ const Blog = ({ blog }) => {
       <div style={blogStyle}>
         {blog.title} <button onClick={() => toggleVisibility()}>{buttonText}</button> <br/>
         {blog.url} <br/>
-        {blog.likes} <button>Like</button> <br/>
+        {blog.likes} <button id={blog.id} onClick={handleLike}>Like</button> <br/>
         {blog.author} <br/>
       </div >
     )

@@ -6,7 +6,7 @@ import LoginForm from './components/LoginForm'
 import loginService from './services/login'
 
 import BlogForm from './components/BlogForm'
-import BlogList from './components/BlogList'
+import Blog from './components/Blog'
 import blogService from './services/blogs'
 
 import Togglable from './components/Togglable'
@@ -77,7 +77,6 @@ const App = () => {
   }
 
   const addBlog = async (blogObject) => {
-    
     try {
       await blogService.create(blogObject)
 
@@ -102,6 +101,36 @@ const App = () => {
 
   const blogFormRef = useRef()
 
+  const updateLike = async (event) => {
+    event.preventDefault()
+    
+    const blogId = event.target.id
+
+    try {
+      const likedBlog = blogs.find(blog => blog.id === blogId)
+      
+      const updateBlog = {
+        title: likedBlog.title,
+        author: likedBlog.author,
+        url: likedBlog.url,
+        likes: likedBlog.likes + 1,
+      }
+
+      await blogService.update(updateBlog, blogId)
+
+      blogService.getAll().then(blogs =>
+        setBlogs(blogs)
+      )
+
+      
+    } catch (exception) {
+      setMessage({ message: "Couldn't update blog", type: 'error' })
+      setTimeout(() => {
+        setMessage({ message: null, type: null })
+      }, 5000)
+    }
+  }
+
   return (
     <div>
       {user === null ?
@@ -125,10 +154,11 @@ const App = () => {
               createBlog={addBlog}
             />
           </Togglable>
-          <BlogList
-            blogs={blogs}
-          />
-
+          <div>
+            {blogs.map(blog =>
+                <Blog key={blog.id} blog={blog} handleLike={updateLike}/>
+            )}
+          </div>
         </div>
       }
     </div >
