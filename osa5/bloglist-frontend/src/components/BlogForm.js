@@ -1,6 +1,36 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-const BlogForm = ({ displayName, blogValueAndHandlers, handleLogout, addBlog }) => {
+const BlogForm = ({ createBlog }) => {
+    const [title, setTitle] = useState('')
+    const [author, setAuthor] = useState('')
+    const [url, setUrl] = useState('')
+
+    const handleTitleChange = (event) => {
+        setTitle(event.target.value)
+    }
+
+    const handleAuthorChange = (event) => {
+        setAuthor(event.target.value)
+    }
+
+    const handleUrlChange = (event) => {
+        setUrl(event.target.value)
+    }
+
+    const addBlog = (event) => {
+        event.preventDefault()
+
+        createBlog({
+            title,
+            author,
+            url
+        })
+
+        setTitle('')
+        setAuthor('')
+        setUrl('')
+    }
+
     return (
         <div>
             <form onSubmit={addBlog}>
@@ -8,32 +38,31 @@ const BlogForm = ({ displayName, blogValueAndHandlers, handleLogout, addBlog }) 
                     Title:
                     <input
                         type="text"
-                        value={blogValueAndHandlers.title}
+                        value={title}
                         name="Title"
-                        onChange={blogValueAndHandlers.handleTitleChange}
+                        onChange={handleTitleChange}
                     />
                 </div>
                 <div>
                     Author:
                     <input
                         type="author"
-                        value={blogValueAndHandlers.author}
+                        value={author}
                         name="Author"
-                        onChange={blogValueAndHandlers.handleAuthorChange}
+                        onChange={handleAuthorChange}
                     />
                 </div>
                 <div>
                     Url:
                     <input
                         type="text"
-                        value={blogValueAndHandlers.url}
+                        value={url}
                         name="Url"
-                        onChange={blogValueAndHandlers.handleUrlChange}
+                        onChange={handleUrlChange}
                     />
                 </div>
+                <button type="submit">Create</button>
             </form>
-
-            <button onClick={addBlog}>Create</button>
         </div>
     )
 }
