@@ -3,9 +3,6 @@ import React from 'react'
 const BlogForm = ({ displayName, blogValueAndHandlers, handleLogout, addBlog }) => {
     return (
         <div>
-            <h2>Blogs</h2>
-            <p>{displayName} logged in <button onClick={handleLogout}>Log out</button></p>
-
             <form onSubmit={addBlog}>
                 <div>
                     Title:

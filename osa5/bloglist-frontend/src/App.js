@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 import Notification from './components/Notification'
 
@@ -8,6 +8,8 @@ import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 import BlogList from './components/BlogList'
 import blogService from './services/blogs'
+
+import Togglable from './components/Togglable'
 
 
 const App = () => {
@@ -105,6 +107,7 @@ const App = () => {
       setTitle('')
       setAuthor('')
       setUrl('')
+      blogFormRef.current.toggleVisibility()
 
       setMessage({ message: `A new blog ${title} by ${author} added.`, type: 'success' })
       setTimeout(() => {
@@ -119,36 +122,43 @@ const App = () => {
     }
   }
 
+  const blogFormRef = useRef()
+
   return (
     <div>
       {user === null ?
-      <div>
-        <Notification message={message.message} type={message.type}/>
-        <LoginForm
-          handleLogin={handleLogin}
-          username={username}
-          handleUsernameChange={handleUsernameChange}
-          password={password}
-          handlePasswordChange={handlePasswordChange}
-        /> 
+        <div>
+          <Notification message={message.message} type={message.type} />
+          <LoginForm
+            handleLogin={handleLogin}
+            username={username}
+            handleUsernameChange={handleUsernameChange}
+            password={password}
+            handlePasswordChange={handlePasswordChange}
+          />
         </div>
         :
         <div>
-          <Notification message={message.message} type={message.type}/>
-          <BlogForm
-            addBlog={addBlog}
-            blogValueAndHandlers={
-              { title, handleTitleChange, author, handleAuthorChange, url, handleUrlChange }
-            }
-            displayName={user.name}
-            handleLogout={handleLogout}
-          />
+          <Notification message={message.message} type={message.type} />
+          <h2>Blogs</h2>
+          <p>{user.name} logged in <button onClick={handleLogout}>Log out</button></p>
+          <Togglable buttonLabel='Create new blog' ref={blogFormRef}>
+            <BlogForm
+              addBlog={addBlog}
+              blogValueAndHandlers={
+                { title, handleTitleChange, author, handleAuthorChange, url, handleUrlChange }
+              }
+              displayName={user.name}
+              handleLogout={handleLogout}
+            />
+          </Togglable>
           <BlogList
             blogs={blogs}
           />
+
         </div>
       }
-    </div>
+    </div >
   )
 }
 
