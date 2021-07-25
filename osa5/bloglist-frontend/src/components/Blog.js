@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import '../index.css'
 
-const Blog = ({ blog, handleLike }) => {
+const Blog = ({ blog, handleLike, handleDelete, username }) => {
   const [visible, setVisible] = useState(false)
 
   const toggleVisibility = () => {
@@ -17,6 +17,8 @@ const Blog = ({ blog, handleLike }) => {
     margin: '5px'
   }
 
+  const removeButton = blog.user.username === username ? (<button id={blog.id} onClick={handleDelete}>Remove</button>) : null
+
   if (visible) {
     return (
       <div style={blogStyle}>
@@ -24,7 +26,8 @@ const Blog = ({ blog, handleLike }) => {
         {blog.url} <br/>
         {blog.likes} <button id={blog.id} onClick={handleLike}>Like</button> <br/>
         {blog.author} <br/>
-      </div >
+        {removeButton}
+      </div>
     )
   } else {
     return (

@@ -133,6 +133,33 @@ const App = () => {
     }
   }
 
+  const deleteBlog = async (event) => {
+    event.preventDefault()
+
+    const blogId = event.target.id
+
+    try {
+      const blogToBeDeleted = blogs.find(blog => blog.id === blogId)
+      if (window.confirm(`Remove blog '${blogToBeDeleted.title}' by '${blogToBeDeleted.author}?`)) {
+
+        await blogService.deleteBlog(blogId)
+
+        updateBlogs()
+
+        setMessage({ message: "Blog deleted", type: 'success' })
+        setTimeout(() => {
+          setMessage({ message: null, type: null })
+        }, 5000)
+      }
+
+    } catch (exception) {
+      setMessage({ message: "Couldn't delete blog", type: 'error' })
+      setTimeout(() => {
+        setMessage({ message: null, type: null })
+      }, 5000)
+    }
+  }
+
   return (
     <div>
       {user === null ?
@@ -158,7 +185,7 @@ const App = () => {
           </Togglable>
           <div>
             {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} handleLike={updateLike} />
+              <Blog key={blog.id} blog={blog} handleLike={updateLike} handleDelete={deleteBlog} username={user.username} />
             )}
           </div>
         </div>
