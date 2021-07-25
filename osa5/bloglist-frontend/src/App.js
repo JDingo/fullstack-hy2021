@@ -22,9 +22,7 @@ const App = () => {
   const [message, setMessage] = useState({ message: null, type: null })
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
+    updateBlogs()
   }, [])
 
   useEffect(() => {
@@ -80,9 +78,7 @@ const App = () => {
     try {
       await blogService.create(blogObject)
 
-      blogService.getAll().then(blogs =>
-        setBlogs(blogs)
-      )
+      updateBlogs()
 
       blogFormRef.current.toggleVisibility()
 
@@ -101,14 +97,23 @@ const App = () => {
 
   const blogFormRef = useRef()
 
+  const updateBlogs = async () => {
+    const blogs = await blogService.getAll()
+    const sortedBlogs = await blogs.sort(function (a, b) {
+      return b.likes - a.likes
+    })
+
+    setBlogs(sortedBlogs)
+  }
+
   const updateLike = async (event) => {
     event.preventDefault()
-    
+
     const blogId = event.target.id
 
     try {
       const likedBlog = blogs.find(blog => blog.id === blogId)
-      
+
       const updateBlog = {
         title: likedBlog.title,
         author: likedBlog.author,
@@ -118,11 +123,8 @@ const App = () => {
 
       await blogService.update(updateBlog, blogId)
 
-      blogService.getAll().then(blogs =>
-        setBlogs(blogs)
-      )
+      updateBlogs()
 
-      
     } catch (exception) {
       setMessage({ message: "Couldn't update blog", type: 'error' })
       setTimeout(() => {
@@ -156,7 +158,7 @@ const App = () => {
           </Togglable>
           <div>
             {blogs.map(blog =>
-                <Blog key={blog.id} blog={blog} handleLike={updateLike}/>
+              <Blog key={blog.id} blog={blog} handleLike={updateLike} />
             )}
           </div>
         </div>
