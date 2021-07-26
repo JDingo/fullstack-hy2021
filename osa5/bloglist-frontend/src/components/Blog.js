@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import '../index.css'
+import PropTypes from 'prop-types'
 
 const Blog = ({ blog, handleLike, handleDelete, username }) => {
   const [visible, setVisible] = useState(false)
@@ -18,6 +19,13 @@ const Blog = ({ blog, handleLike, handleDelete, username }) => {
   }
 
   const removeButton = blog.user.username === username ? (<button id={blog.id} onClick={handleDelete}>Remove</button>) : null
+
+  Blog.propTypes = {
+        blog: PropTypes.object.isRequired,
+        handleLike: PropTypes.func.isRequired,
+        handleDelete: PropTypes.func.isRequired,
+        username: PropTypes.string.isRequired
+  }
 
   if (visible) {
     return (
