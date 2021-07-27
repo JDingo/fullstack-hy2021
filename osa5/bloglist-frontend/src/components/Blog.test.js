@@ -5,6 +5,8 @@ import Blog from './Blog'
 
 describe('<Blog />', () => {
     let component
+    const mockLikeHandler = jest.fn()
+    const mockDeleteHandler = jest.fn()
 
     beforeEach(() => {
         const blog = {
@@ -16,9 +18,6 @@ describe('<Blog />', () => {
                 username: 'Tester'
             }
         }
-
-        const mockLikeHandler = jest.fn()
-        const mockDeleteHandler = jest.fn()
 
         component = render(
             <Blog blog={blog} username={'Tester'} handleLike={mockLikeHandler} handleDelete={mockDeleteHandler} />
@@ -40,5 +39,16 @@ describe('<Blog />', () => {
         expect(component.container).toHaveTextContent('Test Author')
         expect(component.container).toHaveTextContent('Test.url')
         expect(component.container).toHaveTextContent('0')
+    })
+
+    test('clicking like button twice calls mock function twice', () => {
+        const showButton = component.getByText('Show')
+        fireEvent.click(showButton)
+
+        const likeButton = component.getByText('Like')
+        fireEvent.click(likeButton)
+        fireEvent.click(likeButton)
+
+        expect(mockLikeHandler.mock.calls).toHaveLength(2)
     })
 })
