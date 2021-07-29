@@ -76,5 +76,31 @@ describe('Blog app', function () {
             cy.contains('Like')
             cy.contains('press.cy')
         })
+
+        describe('When a blog has been created', function () {
+            beforeEach(function () {
+                cy.request({
+                    method: 'POST',
+                    url: 'http://localhost:3003/api/blogs',
+                    body: {
+                        title: 'Cypress Testing Blog',
+                        author: 'Cypress Tester',
+                        url: 'press.cy',
+                    },
+                    headers: { 'Authorization': `bearer ${JSON.parse(localStorage.getItem('loggedUser')).token}` }
+                })
+
+                cy.visit('http://localhost:3000')
+                cy.contains('Show').click()
+            })
+
+            it('can be liked', function () {
+                cy.contains('Like').click()
+                cy.contains(1)
+
+                cy.contains('Like').click()
+                cy.contains(2)
+            })
+        })
     })
 })
