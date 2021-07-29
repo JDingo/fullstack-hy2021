@@ -3,9 +3,9 @@ describe('Blog app', function () {
         cy.request('POST', 'http://localhost:3003/api/testing/reset')
 
         const user = {
-            username: "Test",
-            name: "test",
-            password: "test"
+            username: 'Test',
+            name: 'test',
+            password: 'test'
         }
         cy.request('POST', 'http://localhost:3003/api/users', user)
 
@@ -46,6 +46,35 @@ describe('Blog app', function () {
                 .and('have.css', 'border-style', 'solid')
 
             cy.get('html').should('not.contain', 'test logged in')
+        })
+    })
+
+    describe('When logged in', function () {
+        beforeEach(function () {
+            cy.request('POST', 'http://localhost:3003/api/login', {
+                username: 'Test', password: 'test'
+            }).then(response => {
+                localStorage.setItem('loggedUser', JSON.stringify(response.body))
+                cy.visit('http://localhost:3000')
+            })
+        })
+
+        it('A blog can be created', function () {
+            cy.contains('Create new blog').click()
+            cy.get('#title').type('Cypress Testing Blog')
+            cy.get('#author').type('Cypress Tester')
+            cy.get('#url').type('press.cy')
+            cy.contains('Submit blog').click()
+
+            cy.contains('Cypress Testing Blog By Cypress Tester')
+
+            cy.contains('Show').click()
+
+            cy.contains('Cypress Testing Blog')
+            cy.contains('Cypress Tester')
+            cy.contains('0')
+            cy.contains('Like')
+            cy.contains('press.cy')
         })
     })
 })
