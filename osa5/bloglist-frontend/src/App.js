@@ -99,6 +99,7 @@ const App = () => {
 
     const updateBlogs = async () => {
         const blogs = await blogService.getAll()
+
         const sortedBlogs = await blogs.sort(function (a, b) {
             return b.likes - a.likes
         })

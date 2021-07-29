@@ -31,7 +31,7 @@ const deleteBlog = async blogId => {
         headers: { Authorization: userToken }
     }
 
-    const response = await axios.put(`${baseUrl}/${blogId}`, config)
+    const response = await axios.delete(`${baseUrl}/${blogId}`, config)
     return response.data
 }
 

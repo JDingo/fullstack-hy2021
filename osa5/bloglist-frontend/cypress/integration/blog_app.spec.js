@@ -101,6 +101,44 @@ describe('Blog app', function () {
                 cy.contains('Like').click()
                 cy.contains(2)
             })
+
+            it('can be deleted by the uploader', function () {
+                cy.contains('Remove').click()
+
+                cy.get('.success')
+                    .should('contain', 'Blog ')
+                    .and('have.css', 'background-color', 'rgb(0, 255, 0)')
+                    .and('have.css', 'border-style', 'solid')
+
+                cy.get('html').should('not.contain', 'Cypress Testing Blog')
+                cy.get('html').should('not.contain', 'Cypress Tester')
+                cy.get('html').should('not.contain', 'Show')
+                cy.get('html').should('not.contain', 'Hide')
+                cy.get('html').should('not.contain', 'Remove')
+            })
+
+            it('cannot be deleted by another user', function () {
+                const user = {
+                    username: 'Another',
+                    name: 'Another',
+                    password: 'another'
+                }
+                cy.request('POST', 'http://localhost:3003/api/users', user)
+
+                cy.contains('Log out').click()
+
+                cy.request('POST', 'http://localhost:3003/api/login', {
+                    username: 'Another', password: 'another'
+                }).then(response => {
+                    localStorage.setItem('loggedUser', JSON.stringify(response.body))
+                    cy.visit('http://localhost:3000')
+                })
+
+                cy.contains('Another logged in')
+
+                cy.contains('Show').click()
+                cy.get('html').should('not.contain', 'Remove')
+            })
         })
     })
 })
