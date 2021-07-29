@@ -8,6 +8,7 @@ const LoginForm = ({ handleLogin, username, handleUsernameChange, password, hand
                 <div>
                     Username
                     <input
+                        id="username"
                         type="text"
                         value={username}
                         name="Username"
@@ -17,6 +18,7 @@ const LoginForm = ({ handleLogin, username, handleUsernameChange, password, hand
                 <div>
                     Password
                     <input
+                        id="password"
                         type="password"
                         value={password}
                         name="Password"
