@@ -32,7 +32,7 @@ const Blog = ({ blog, handleLike, handleDelete, username }) => {
             <div style={blogStyle} className="blog">
                 {blog.title} <button onClick={() => toggleVisibility()}>{buttonText}</button> <br />
                 {blog.url} <br />
-                {blog.likes} <button id={blog.id} onClick={handleLike}>Like</button> <br />
+                {blog.likes} <button className='likeButton' id={blog.id} onClick={handleLike}>Like</button> <br />
                 {blog.author} <br />
                 {removeButton}
             </div>
@@ -41,7 +41,7 @@ const Blog = ({ blog, handleLike, handleDelete, username }) => {
         return (
             <div style={blogStyle} className="blog">
                 {blog.title} By {blog.author}
-                <button onClick={() => toggleVisibility()}>{buttonText}</button>
+                <button className='showButton' onClick={() => toggleVisibility()}>{buttonText}</button>
             </div>
         )
     }

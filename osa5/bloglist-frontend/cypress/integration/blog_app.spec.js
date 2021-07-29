@@ -140,5 +140,69 @@ describe('Blog app', function () {
                 cy.get('html').should('not.contain', 'Remove')
             })
         })
+
+        describe('When multiple blog has been created', function () {
+            beforeEach(function () {
+                cy.request({
+                    method: 'POST',
+                    url: 'http://localhost:3003/api/blogs',
+                    body: {
+                        title: 'Last',
+                        author: 'Last',
+                        url: 'Last',
+                    },
+                    headers: { 'Authorization': `bearer ${JSON.parse(localStorage.getItem('loggedUser')).token}` }
+                })
+
+                cy.request({
+                    method: 'POST',
+                    url: 'http://localhost:3003/api/blogs',
+                    body: {
+                        title: 'Second',
+                        author: 'Second',
+                        url: 'Second',
+                    },
+                    headers: { 'Authorization': `bearer ${JSON.parse(localStorage.getItem('loggedUser')).token}` }
+                })
+
+                cy.request({
+                    method: 'POST',
+                    url: 'http://localhost:3003/api/blogs',
+                    body: {
+                        title: 'First',
+                        author: 'First',
+                        url: 'First',
+                    },
+                    headers: { 'Authorization': `bearer ${JSON.parse(localStorage.getItem('loggedUser')).token}` }
+                })
+            })
+
+            it('blogs are sorted by likes', function () {
+                cy
+                    .get('.showButton')
+                    .each(button => button.click())
+
+                cy.get('.likeButton').then(buttons => {
+                    cy.wrap(buttons[0]).click()
+                    cy.wait(500)
+
+                    cy.wrap(buttons[1]).click()
+                    cy.wait(500)
+                    cy.wrap(buttons[1]).click()
+                    cy.wait(500)
+
+                    cy.wrap(buttons[2]).click()
+                    cy.wait(500)
+                    cy.wrap(buttons[2]).click()
+                    cy.wait(500)
+                    cy.wrap(buttons[2]).click()
+                    cy.wait(500)
+                })
+
+                cy.get('.blog').eq(0).should('contain', 'First').and('contain', '3')
+                cy.get('.blog').eq(1).should('contain','Second').and('contain','2')
+                cy.get('.blog').eq(2).should('contain','Last').and('contain','1')
+            })
+        })
     })
 })
