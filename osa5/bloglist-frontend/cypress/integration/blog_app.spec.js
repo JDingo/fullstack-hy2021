@@ -2,12 +2,7 @@ describe('Blog app', function () {
     beforeEach(function () {
         cy.request('POST', 'http://localhost:3003/api/testing/reset')
 
-        const user = {
-            username: 'Test',
-            name: 'test',
-            password: 'test'
-        }
-        cy.request('POST', 'http://localhost:3003/api/users', user)
+        cy.createUser({ username: 'Test', name: 'test', password: 'test' })
 
         cy.visit('http://localhost:3000')
     })
@@ -51,12 +46,7 @@ describe('Blog app', function () {
 
     describe('When logged in', function () {
         beforeEach(function () {
-            cy.request('POST', 'http://localhost:3003/api/login', {
-                username: 'Test', password: 'test'
-            }).then(response => {
-                localStorage.setItem('loggedUser', JSON.stringify(response.body))
-                cy.visit('http://localhost:3000')
-            })
+            cy.login({ username: 'Test', password: 'test' })
         })
 
         it('A blog can be created', function () {
@@ -79,16 +69,7 @@ describe('Blog app', function () {
 
         describe('When a blog has been created', function () {
             beforeEach(function () {
-                cy.request({
-                    method: 'POST',
-                    url: 'http://localhost:3003/api/blogs',
-                    body: {
-                        title: 'Cypress Testing Blog',
-                        author: 'Cypress Tester',
-                        url: 'press.cy',
-                    },
-                    headers: { 'Authorization': `bearer ${JSON.parse(localStorage.getItem('loggedUser')).token}` }
-                })
+                cy.createBlog({ title: 'Cypress Testing Blog', author: 'Cypress Tester',  url: 'press.cy' })
 
                 cy.visit('http://localhost:3000')
                 cy.contains('Show').click()
@@ -118,21 +99,11 @@ describe('Blog app', function () {
             })
 
             it('cannot be deleted by another user', function () {
-                const user = {
-                    username: 'Another',
-                    name: 'Another',
-                    password: 'another'
-                }
-                cy.request('POST', 'http://localhost:3003/api/users', user)
+                cy.createUser({ username: 'Another', name: 'Another', password: 'Another' })
 
                 cy.contains('Log out').click()
 
-                cy.request('POST', 'http://localhost:3003/api/login', {
-                    username: 'Another', password: 'another'
-                }).then(response => {
-                    localStorage.setItem('loggedUser', JSON.stringify(response.body))
-                    cy.visit('http://localhost:3000')
-                })
+                cy.login({ username: 'Another', password: 'Another' })
 
                 cy.contains('Another logged in')
 
@@ -143,38 +114,25 @@ describe('Blog app', function () {
 
         describe('When multiple blog has been created', function () {
             beforeEach(function () {
-                cy.request({
-                    method: 'POST',
-                    url: 'http://localhost:3003/api/blogs',
-                    body: {
-                        title: 'Last',
-                        author: 'Last',
-                        url: 'Last',
-                    },
-                    headers: { 'Authorization': `bearer ${JSON.parse(localStorage.getItem('loggedUser')).token}` }
+                cy.createBlog({
+                    title: 'Last',
+                    author: 'Last',
+                    url: 'Last'
                 })
 
-                cy.request({
-                    method: 'POST',
-                    url: 'http://localhost:3003/api/blogs',
-                    body: {
-                        title: 'Second',
-                        author: 'Second',
-                        url: 'Second',
-                    },
-                    headers: { 'Authorization': `bearer ${JSON.parse(localStorage.getItem('loggedUser')).token}` }
+                cy.createBlog({
+                    title: 'Second',
+                    author: 'Second',
+                    url: 'Second'
                 })
 
-                cy.request({
-                    method: 'POST',
-                    url: 'http://localhost:3003/api/blogs',
-                    body: {
-                        title: 'First',
-                        author: 'First',
-                        url: 'First',
-                    },
-                    headers: { 'Authorization': `bearer ${JSON.parse(localStorage.getItem('loggedUser')).token}` }
+                cy.createBlog({
+                    title: 'First',
+                    author: 'First',
+                    url: 'First'
                 })
+
+                cy.visit('http://localhost:3000')
             })
 
             it('blogs are sorted by likes', function () {
@@ -184,19 +142,19 @@ describe('Blog app', function () {
 
                 cy.get('.likeButton').then(buttons => {
                     cy.wrap(buttons[0]).click()
-                    cy.wait(500)
+                    cy.wait(250)
 
                     cy.wrap(buttons[1]).click()
-                    cy.wait(500)
+                    cy.wait(250)
                     cy.wrap(buttons[1]).click()
-                    cy.wait(500)
+                    cy.wait(250)
 
                     cy.wrap(buttons[2]).click()
-                    cy.wait(500)
+                    cy.wait(250)
                     cy.wrap(buttons[2]).click()
-                    cy.wait(500)
+                    cy.wait(250)
                     cy.wrap(buttons[2]).click()
-                    cy.wait(500)
+                    cy.wait(250)
                 })
 
                 cy.get('.blog').eq(0).should('contain', 'First').and('contain', '3')
