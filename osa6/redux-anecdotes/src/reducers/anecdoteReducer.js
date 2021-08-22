@@ -37,6 +37,17 @@ export const createAnecdote = (content) => {
     }
 }
 
+const compareLikes = (a, b) => {
+    if (a.votes - b.votes < 0) {
+        return 1
+    }
+    if (a.votes - b.votes > 0) {
+        return -1
+    }
+
+    return 0
+}
+
 const reducer = (state = initialState, action) => {
     console.log('state now: ', state)
     console.log('action', action)
@@ -55,6 +66,9 @@ const reducer = (state = initialState, action) => {
             )
         case 'NEW_ANECDOTE':
             return [...state, action.data]
+        case 'SORT':
+            const sortedAnecdotes = [...state].sort(compareLikes)
+            return sortedAnecdotes
         default:
             return state
     }
