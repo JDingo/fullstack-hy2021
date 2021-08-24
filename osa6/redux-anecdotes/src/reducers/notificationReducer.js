@@ -1,34 +1,25 @@
-export const setVoteNotification = (content) => {
-    return {
-        type: 'SET_VOTE_NOTIFICATION',
-        data: {
-            message: `You voted '${content}'`
-        }
-    }
-}
+export const setNotification = (message, time) => {
+    return async dispatch => {
+        await dispatch({
+            type: 'SET_NOTIFICATION',
+            data: {
+                message
+            }
+        })
 
-export const setCreationNotification = (content) => {
-    return {
-        type: 'SET_CREATION_NOTIFICATION',
-        data: {
-            message: `New anecdote '${content}' added`
-        }
+        setTimeout(() => {
+            dispatch({ type: 'REMOVE_NOTIFICATION' })
+        }, time * 1000)
     }
-}
-
-export const removeNotification = () => {
-    return { type: 'REMOVE_NOTIFICATION' }
 }
 
 const reducer = (state = null, action) => {
     switch (action.type) {
-        case 'SET_VOTE_NOTIFICATION':
-            return action.data.message
-        case 'SET_CREATION_NOTIFICATION':
+        case 'SET_NOTIFICATION':
             return action.data.message
         case 'REMOVE_NOTIFICATION':
             return null
-        default: 
+        default:
             return state
     }
 }
