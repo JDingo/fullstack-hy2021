@@ -13,7 +13,6 @@ const AnecdoteForm = () => {
         event.target.anecdote.value = ''
 
         dispatch(createAnecdote(content))
-        dispatch({ type: 'SORT' })
         dispatch(setCreationNotification(content))
 
         setTimeout(() => {

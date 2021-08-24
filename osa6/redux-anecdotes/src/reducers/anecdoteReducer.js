@@ -1,9 +1,21 @@
 import anecdoteService from '../services/anecdotes'
 
-export const voteAnecdote = (id) => {
-    return {
-        type: 'VOTE_ANECDOTE',
-        data: { id }
+export const voteAnecdote = (content, id, votes) => {
+    return async dispatch => {
+        const likedObject = {
+            content,
+            id,
+            votes: votes + 1
+        }
+
+        const updatedObject = await anecdoteService.update(id, likedObject)
+
+        dispatch({
+            type: 'VOTE_ANECDOTE',
+            data: updatedObject
+        })
+
+        dispatch({ type: 'SORT' })
     }
 }
 
@@ -35,6 +47,8 @@ export const initializeAnecdotes = () => {
             type: 'INIT_ANECDOTES',
             data: anecdotes
         })
+
+        dispatch({ type: 'SORT' })
     }
 }
 

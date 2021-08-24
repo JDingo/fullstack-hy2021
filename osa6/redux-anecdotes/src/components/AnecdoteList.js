@@ -14,12 +14,11 @@ const AnecdoteList = () => {
         return anecdotes.filter(anecdote => anecdote.content.includes(filter))
     })
 
-    const vote = ({ content, id }) => {
+    const vote = ({ content, id, votes }) => {
         console.log('vote', id)
-        dispatch(voteAnecdote(id))
-        dispatch({ type: 'SORT' })
-        dispatch(setVoteNotification(content))
+        dispatch(voteAnecdote(content, id, votes))
 
+        dispatch(setVoteNotification(content))
         setTimeout(() => {
             dispatch(removeNotification())
         }, 5000)
