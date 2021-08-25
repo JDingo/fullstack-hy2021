@@ -3,7 +3,7 @@
     {
       "content": "If it hurts, do it more often",
       "id": "47145",
-      "votes": 12
+      "votes": 13
     },
     {
       "content": "Adding manpower to a late software project makes it later!",
@@ -28,7 +28,7 @@
     {
       "content": "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
       "id": "98312",
-      "votes": 2
+      "votes": 4
     },
     {
       "content": "A new note to the JSON-server",
@@ -38,7 +38,7 @@
     {
       "content": "redux-thunk test",
       "id": "kXe5NiQ",
-      "votes": 7
+      "votes": 9
     },
     {
       "content": "asda",
@@ -68,6 +68,21 @@
     {
       "content": "asdadddd",
       "id": "nFTDAdW",
+      "votes": 1
+    },
+    {
+      "content": "Öyh",
+      "votes": 0,
+      "id": "oZP1qUf"
+    },
+    {
+      "content": "Asda",
+      "id": "FRcoZP_",
+      "votes": 1
+    },
+    {
+      "content": "Sdadasdasd",
+      "id": "rw7Is_S",
       "votes": 1
     }
   ]

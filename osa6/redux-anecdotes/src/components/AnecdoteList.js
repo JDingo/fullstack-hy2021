@@ -1,43 +1,55 @@
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { connect } from 'react-redux'
 import { voteAnecdote } from '../reducers/anecdoteReducer'
 import { setNotification } from '../reducers/notificationReducer'
 
-const AnecdoteList = () => {
-    const dispatch = useDispatch()
-
-    const anecdotes = useSelector(({ anecdotes, filter }) => {
-        if (filter === '') {
-            return anecdotes
-        }
-
-        return anecdotes.filter(anecdote => anecdote.content.includes(filter))
-    })
-
+const AnecdoteList = (props) => {
     const vote = ({ content, id, votes }) => {
         console.log('vote', id)
-        dispatch(voteAnecdote(content, id, votes))
-        
-        dispatch(setNotification(`You voted '${content}'.`, 5))
+        props.voteAnecdote(content, id, votes)
+
+        props.setNotification(`You voted '${content}'.`, 5)
     }
-    
+
     return (
         <div>
-        {
-            anecdotes.map(anecdote =>
-                <div key={anecdote.id}>
-                    <div>
-                        {anecdote.content}
+            {
+                props.anecdotes.map(anecdote =>
+                    <div key={anecdote.id}>
+                        <div>
+                            {anecdote.content}
+                        </div>
+                        <div>
+                            has {anecdote.votes}
+                            <button onClick={() => vote(anecdote)}>vote</button>
+                        </div>
                     </div>
-                    <div>
-                        has {anecdote.votes}
-                        <button onClick={() => vote(anecdote)}>vote</button>
-                    </div>
-                </div>
-            )
-        }
+                )
+            }
         </div>
     )
 }
 
-export default AnecdoteList
+const mapStateToProps = (state) => {
+    if (state.filter === '') {
+        return {
+            anecdotes: state.anecdotes
+        }
+    }
+
+    return {
+        anecdotes: state.anecdotes.filter(anecdote => anecdote.content.includes(state.filter))
+    }
+}
+
+const mapDispatchToProps = {
+    voteAnecdote,
+    setNotification
+}
+
+const ConnectedAnecdotes = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(AnecdoteList)
+
+export default ConnectedAnecdotes
