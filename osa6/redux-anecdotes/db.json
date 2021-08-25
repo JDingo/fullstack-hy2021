@@ -43,7 +43,7 @@
     {
       "content": "asda",
       "id": "afvl_K3",
-      "votes": 7
+      "votes": 8
     },
     {
       "content": "beb",
@@ -62,8 +62,13 @@
     },
     {
       "content": "dsad",
-      "votes": 0,
-      "id": "wVUOqhg"
+      "id": "wVUOqhg",
+      "votes": 1
+    },
+    {
+      "content": "asdadddd",
+      "id": "nFTDAdW",
+      "votes": 1
     }
   ]
 }
