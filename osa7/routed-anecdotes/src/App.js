@@ -69,9 +69,9 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-    const content = useField('content')
-    const author = useField('author')
-    const info = useField('url')
+    const { reset: contentReset, ...content } = useField('content')
+    const { reset: authorReset, ...author } = useField('author')
+    const { reset: infoReset, ...info } = useField('info')
 
     const history = useHistory()
 
@@ -94,9 +94,9 @@ const CreateNew = (props) => {
     }
 
     const handleReset = () => {
-        content.reset()
-        author.reset()
-        info.reset()
+        content.contentReset()
+        author.authorReset()
+        info.infoReset()
     }
 
     return (
@@ -179,7 +179,7 @@ const App = () => {
                     <About />
                 </Route>
                 <Route path="/create">
-                    <CreateNew addNew={addNew} setNotification={setNotification}/>
+                    <CreateNew addNew={addNew} setNotification={setNotification} />
                 </Route>
                 <Route path="/">
                     <p>{notification}</p>
