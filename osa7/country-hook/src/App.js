@@ -35,8 +35,8 @@ const useCountry = (name) => {
     }
 }
 
-const Country = (props) => {
-    const country = props.country.country
+const Country = ({ countryObject }) => {
+    const country = countryObject.country
 
     console.log(country)
 
@@ -54,7 +54,7 @@ const Country = (props) => {
 
     return (
         <div>
-            <h3>{country.data.name} </h3>
+            <h3>{country.data[0].name} </h3>
             <div>capital {country.data[0].capital} </div>
             <div>population {country.data[0].population}</div>
             <img src={country.data[0].flag} height='100' alt={`flag of ${country.data.name}`} />
@@ -79,7 +79,7 @@ const App = () => {
                 <button>find</button>
             </form>
 
-            <Country country={country} />
+            <Country countryObject={country} />
         </div>
     )
 }
