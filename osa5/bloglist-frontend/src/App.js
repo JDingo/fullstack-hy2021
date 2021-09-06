@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useDispatch } from 'react-redux'
 
 import Notification from './components/Notification'
 
@@ -11,8 +12,12 @@ import blogService from './services/blogs'
 
 import Togglable from './components/Togglable'
 
+import { setNotification } from './reducers/notificationReducer'
+
 
 const App = () => {
+    const dispatch = useDispatch()
+
     const [blogs, setBlogs] = useState([])
 
     const [username, setUsername] = useState('')
@@ -51,10 +56,7 @@ const App = () => {
             setPassword('')
 
         } catch (exception) {
-            setMessage({ message: 'Wrong credentials', type: 'error' })
-            setTimeout(() => {
-                setMessage({ message: null, type: null })
-            }, 5000)
+            dispatch(setNotification({ message: 'Wrong credentials', type: 'error' }))
         }
     }
 
