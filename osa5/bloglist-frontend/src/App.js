@@ -24,8 +24,6 @@ const App = () => {
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
 
-    const [message, setMessage] = useState({ message: null, type: null })
-
     useEffect(() => {
         updateBlogs()
     }, [])
@@ -84,16 +82,10 @@ const App = () => {
 
             blogFormRef.current.toggleVisibility()
 
-            setMessage({ message: `A new blog ${blogObject.title} by ${blogObject.author} added.`, type: 'success' })
-            setTimeout(() => {
-                setMessage({ message: null, type: null })
-            }, 5000)
+            dispatch(setNotification({ message: `A new blog ${blogObject.title} by ${blogObject.author} added.`, type: 'success' }))
 
         } catch (exception) {
-            setMessage({ message: 'Adding blog failed', type: 'error' })
-            setTimeout(() => {
-                setMessage({ message: null, type: null })
-            }, 5000)
+            dispatch(setNotification({ message: 'Adding blog failed', type: 'error' }))
         }
     }
 
@@ -129,10 +121,7 @@ const App = () => {
             updateBlogs()
 
         } catch (exception) {
-            setMessage({ message: 'Couldn\'t update blog', type: 'error' })
-            setTimeout(() => {
-                setMessage({ message: null, type: null })
-            }, 5000)
+            dispatch(setNotification({ message: 'Couldn\'t update blog', type: 'error' }))
         }
     }
 
@@ -149,17 +138,11 @@ const App = () => {
 
                 updateBlogs()
 
-                setMessage({ message: 'Blog deleted', type: 'success' })
-                setTimeout(() => {
-                    setMessage({ message: null, type: null })
-                }, 5000)
+                dispatch(setNotification({ message: 'Blog deleted', type: 'success' }))
             }
 
         } catch (exception) {
-            setMessage({ message: 'Couldn\'t delete blog', type: 'error' })
-            setTimeout(() => {
-                setMessage({ message: null, type: null })
-            }, 5000)
+            dispatch(setNotification({ message: 'Couldn\'t delete blog', type: 'error' }))
         }
     }
 
@@ -167,7 +150,7 @@ const App = () => {
         <div>
             {user === null ?
                 <div>
-                    <Notification message={message.message} type={message.type} />
+                    <Notification />
                     <LoginForm
                         handleLogin={handleLogin}
                         username={username}
@@ -178,7 +161,7 @@ const App = () => {
                 </div>
                 :
                 <div>
-                    <Notification message={message.message} type={message.type} />
+                    <Notification />
                     <h2>Blogs</h2>
                     <p>{user.name} logged in <button onClick={handleLogout}>Log out</button></p>
                     <Togglable buttonLabel='Create new blog' ref={blogFormRef}>
