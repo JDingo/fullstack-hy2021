@@ -4,16 +4,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import Notification from './components/Notification'
 
 import LoginForm from './components/LoginForm'
-import loginService from './services/login'
 
 import BlogForm from './components/BlogForm'
 import Blog from './components/Blog'
-import blogService from './services/blogs'
 
 import Togglable from './components/Togglable'
 
 import { setNotification } from './reducers/notificationReducer'
 import { initializeBlogs, newBlog, updateBlog, deleteBlog } from './reducers/blogReducer'
+import { checkLocalLogin, login, logout } from './reducers/loginReducer'
 
 
 const App = () => {
@@ -21,48 +20,28 @@ const App = () => {
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [user, setUser] = useState(null)
 
     const blogs = useSelector(store => store.blogs)
+    const user = useSelector(store => store.login)
 
     useEffect(() => {
         dispatch(initializeBlogs())
     }, [dispatch])
 
     useEffect(() => {
-        const loggedUserJSON = window.localStorage.getItem('loggedUser')
-        if (loggedUserJSON) {
-            const user = JSON.parse(loggedUserJSON)
-            setUser(user)
-            blogService.setToken(user.token)
-        }
+        dispatch(checkLocalLogin())
     }, [])
 
-    const handleLogin = async (event) => {
+    const handleLogin = (event) => {
         event.preventDefault()
-        try {
-            const user = await loginService.login({
-                username, password
-            })
 
-            window.localStorage.setItem(
-                'loggedUser', JSON.stringify(user)
-            )
-
-            blogService.setToken(user.token)
-            setUser(user)
-            setUsername('')
-            setPassword('')
-
-        } catch (exception) {
-            dispatch(setNotification({ message: 'Wrong credentials', type: 'error' }))
-        }
+        dispatch(login(username, password))
+        setUsername('')
+        setPassword('')
     }
 
     const handleLogout = () => {
-        window.localStorage.removeItem('loggedUser')
-        blogService.setToken(null)
-        setUser(null)
+        dispatch(logout())
         setUsername('')
         setPassword('')
     }
@@ -75,7 +54,7 @@ const App = () => {
         setPassword(event.target.value)
     }
 
-    const addBlog = async (blogObject) => {
+    const addBlog = (blogObject) => {
         try {
             dispatch(newBlog(blogObject))
             blogFormRef.current.toggleVisibility()
@@ -87,7 +66,7 @@ const App = () => {
 
     const blogFormRef = useRef()
 
-    const updateLike = async (event) => {
+    const updateLike = (event) => {
         event.preventDefault()
         const blogId = event.target.id
 
@@ -99,7 +78,7 @@ const App = () => {
         }
     }
 
-    const handleDelete = async (event) => {
+    const handleDelete = (event) => {
         event.preventDefault()
         const blogId = event.target.id
 
