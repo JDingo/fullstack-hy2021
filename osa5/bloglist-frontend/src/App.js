@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import Notification from './components/Notification'
 
@@ -13,20 +13,25 @@ import blogService from './services/blogs'
 import Togglable from './components/Togglable'
 
 import { setNotification } from './reducers/notificationReducer'
+import { initializeBlogs, sortBlogs, newBlog } from './reducers/blogReducer'
 
 
 const App = () => {
     const dispatch = useDispatch()
 
-    const [blogs, setBlogs] = useState([])
-
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
 
+    const blogs = useSelector(store => store.blogs)
+
     useEffect(() => {
-        updateBlogs()
-    }, [])
+        blogService.getAll().then(
+            blogs => {
+                dispatch(initializeBlogs(blogs))
+                dispatch(sortBlogs())
+            })
+    }, [dispatch])
 
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem('loggedUser')
@@ -76,9 +81,8 @@ const App = () => {
 
     const addBlog = async (blogObject) => {
         try {
-            await blogService.create(blogObject)
-
-            updateBlogs()
+            const newBlogObject = await blogService.create(blogObject)
+            dispatch(newBlog(newBlogObject))
 
             blogFormRef.current.toggleVisibility()
 
@@ -90,16 +94,6 @@ const App = () => {
     }
 
     const blogFormRef = useRef()
-
-    const updateBlogs = async () => {
-        const blogs = await blogService.getAll()
-
-        const sortedBlogs = await blogs.sort(function (a, b) {
-            return b.likes - a.likes
-        })
-
-        setBlogs(sortedBlogs)
-    }
 
     const updateLike = async (event) => {
         event.preventDefault()
@@ -118,7 +112,7 @@ const App = () => {
 
             await blogService.update(updateBlog, blogId)
 
-            updateBlogs()
+            dispatch(sortBlogs())
 
         } catch (exception) {
             dispatch(setNotification({ message: 'Couldn\'t update blog', type: 'error' }))
@@ -136,7 +130,7 @@ const App = () => {
 
                 await blogService.deleteBlog(blogId)
 
-                updateBlogs()
+                dispatch(sortBlogs())
 
                 dispatch(setNotification({ message: 'Blog deleted', type: 'success' }))
             }
