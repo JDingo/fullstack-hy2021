@@ -13,7 +13,7 @@ import blogService from './services/blogs'
 import Togglable from './components/Togglable'
 
 import { setNotification } from './reducers/notificationReducer'
-import { initializeBlogs, sortBlogs, newBlog } from './reducers/blogReducer'
+import { initializeBlogs, newBlog, updateBlog, deleteBlog } from './reducers/blogReducer'
 
 
 const App = () => {
@@ -26,11 +26,7 @@ const App = () => {
     const blogs = useSelector(store => store.blogs)
 
     useEffect(() => {
-        blogService.getAll().then(
-            blogs => {
-                dispatch(initializeBlogs(blogs))
-                dispatch(sortBlogs())
-            })
+        dispatch(initializeBlogs())
     }, [dispatch])
 
     useEffect(() => {
@@ -81,13 +77,9 @@ const App = () => {
 
     const addBlog = async (blogObject) => {
         try {
-            const newBlogObject = await blogService.create(blogObject)
-            dispatch(newBlog(newBlogObject))
-
+            dispatch(newBlog(blogObject))
             blogFormRef.current.toggleVisibility()
-
             dispatch(setNotification({ message: `A new blog ${blogObject.title} by ${blogObject.author} added.`, type: 'success' }))
-
         } catch (exception) {
             dispatch(setNotification({ message: 'Adding blog failed', type: 'error' }))
         }
@@ -97,44 +89,26 @@ const App = () => {
 
     const updateLike = async (event) => {
         event.preventDefault()
-
         const blogId = event.target.id
 
         try {
             const likedBlog = blogs.find(blog => blog.id === blogId)
-
-            const updateBlog = {
-                title: likedBlog.title,
-                author: likedBlog.author,
-                url: likedBlog.url,
-                likes: likedBlog.likes + 1,
-            }
-
-            await blogService.update(updateBlog, blogId)
-
-            dispatch(sortBlogs())
-
+            dispatch(updateBlog(likedBlog, blogId))
         } catch (exception) {
             dispatch(setNotification({ message: 'Couldn\'t update blog', type: 'error' }))
         }
     }
 
-    const deleteBlog = async (event) => {
+    const handleDelete = async (event) => {
         event.preventDefault()
-
         const blogId = event.target.id
 
         try {
             const blogToBeDeleted = blogs.find(blog => blog.id === blogId)
             if (window.confirm(`Remove blog '${blogToBeDeleted.title}' by '${blogToBeDeleted.author}?`)) {
-
-                await blogService.deleteBlog(blogId)
-
-                dispatch(sortBlogs())
-
+                dispatch(deleteBlog(blogId))
                 dispatch(setNotification({ message: 'Blog deleted', type: 'success' }))
             }
-
         } catch (exception) {
             dispatch(setNotification({ message: 'Couldn\'t delete blog', type: 'error' }))
         }
@@ -165,7 +139,7 @@ const App = () => {
                     </Togglable>
                     <div>
                         {blogs.map(blog =>
-                            <Blog key={blog.id} blog={blog} handleLike={updateLike} handleDelete={deleteBlog} username={user.username} />
+                            <Blog key={blog.id} blog={blog} handleLike={updateLike} handleDelete={handleDelete} username={user.username} />
                         )}
                     </div>
                 </div>

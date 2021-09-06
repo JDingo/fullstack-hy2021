@@ -6,8 +6,6 @@ import { useSelector } from 'react-redux'
 const Notification = () => {
     const { message, type } = useSelector(state => state.notification)
 
-    console.log(message, type)
-
     if (message === null) {
         return null
     }
