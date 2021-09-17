@@ -1,16 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 import '../index.css'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
-const Blog = ({ blog, handleLike, handleDelete, username }) => {
-    const [visible, setVisible] = useState(false)
-
-    const toggleVisibility = () => {
-        setVisible(!visible)
-    }
-
-    const buttonText = visible ? 'Hide' : 'Show'
-
+const Blog = ({ blog }) => {
     const blogStyle = {
         borderStyle: 'solid',
         borderRadius: '3px',
@@ -18,33 +11,15 @@ const Blog = ({ blog, handleLike, handleDelete, username }) => {
         margin: '5px'
     }
 
-    const removeButton = blog.user.username === username ? (<button id={blog.id} onClick={handleDelete}>Remove</button>) : null
-
     Blog.propTypes = {
         blog: PropTypes.object.isRequired,
-        handleLike: PropTypes.func.isRequired,
-        handleDelete: PropTypes.func.isRequired,
-        username: PropTypes.string.isRequired
     }
 
-    if (visible) {
-        return (
-            <div style={blogStyle} className="blog">
-                {blog.title} <button onClick={() => toggleVisibility()}>{buttonText}</button> <br />
-                {blog.url} <br />
-                {blog.likes} <button className='likeButton' id={blog.id} onClick={handleLike}>Like</button> <br />
-                {blog.author} <br />
-                {removeButton}
-            </div>
-        )
-    } else {
-        return (
-            <div style={blogStyle} className="blog">
-                {blog.title} By {blog.author}
-                <button className='showButton' onClick={() => toggleVisibility()}>{buttonText}</button>
-            </div>
-        )
-    }
+    return (
+        <div style={blogStyle} className="blog">
+            <Link to={`/blogs/${blog.id}`}>{blog.title} By {blog.author}</Link>
+        </div>
+    )
 }
 
 export default Blog

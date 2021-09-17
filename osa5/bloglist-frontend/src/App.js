@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
-    Switch, Route, Link, useRouteMatch
+    Switch, Route, Link, useRouteMatch, useHistory
 } from 'react-router-dom'
 
 import Notification from './components/Notification'
@@ -17,6 +17,7 @@ import { initializeBlogs, newBlog, updateBlog, deleteBlog } from './reducers/blo
 import { checkLocalLogin, login, logout } from './reducers/loginReducer'
 import { initializeUsers } from './reducers/userReducer'
 import User from './components/User'
+import BlogInfo from './components/BlogInfo'
 
 
 const App = () => {
@@ -28,6 +29,8 @@ const App = () => {
     const blogs = useSelector(store => store.blogs)
     const user = useSelector(store => store.login)
     const users = useSelector(store => store.users)
+
+    const history = useHistory()
 
     useEffect(() => {
         dispatch(initializeBlogs())
@@ -41,9 +44,14 @@ const App = () => {
         dispatch(initializeUsers())
     }, [dispatch])
 
-    const match = useRouteMatch('/users/:id')
-    const inspectedUser = match
-        ? users.find(user => user.id === match.params.id)
+    const userMatch = useRouteMatch('/users/:id')
+    const inspectedUser = userMatch
+        ? users.find(user => user.id === userMatch.params.id)
+        : null
+
+    const blogMatch = useRouteMatch('/blogs/:id')
+    const inspectedBlog = blogMatch
+        ? blogs.find(blog => blog.id === blogMatch.params.id)
         : null
 
     const handleLogin = (event) => {
@@ -102,6 +110,8 @@ const App = () => {
                 dispatch(deleteBlog(blogId))
                 dispatch(setNotification({ message: 'Blog deleted', type: 'success' }))
             }
+
+            history.push('/')
         } catch (exception) {
             dispatch(setNotification({ message: 'Couldn\'t delete blog', type: 'error' }))
         }
@@ -137,6 +147,9 @@ const App = () => {
                         <p>{user.name} logged in <button onClick={handleLogout}>Log out</button></p>
 
                         <Switch>
+                            <Route path="/blogs/:id">
+                                <BlogInfo blog={inspectedBlog} handleLike={updateLike} username={user.username} handleDelete={handleDelete}/>
+                            </Route>
                             <Route path="/users/:id">
                                 <User user={inspectedUser} />
                             </Route>
@@ -152,7 +165,7 @@ const App = () => {
                                     </Togglable>
                                     <div>
                                         {blogs.map(blog =>
-                                            <Blog key={blog.id} blog={blog} handleLike={updateLike} handleDelete={handleDelete} username={user.username} />
+                                            <Blog key={blog.id} blog={blog}/>
                                         )}
                                     </div>
                                 </div>
