@@ -20,7 +20,6 @@ export const sortBlogs = () => {
 export const newBlog = (blog) => {
     return async dispatch => {
         const createdBlog = await blogService.create(blog)
-        console.log(createdBlog)
         dispatch({
             type: 'NEW_BLOG',
             data: createdBlog
@@ -28,13 +27,35 @@ export const newBlog = (blog) => {
     }
 }
 
-export const updateBlog = (blog, id) => {
+export const likeBlog = (blog, id) => {
     return async dispatch => {
         const updatedBlog = {
             title: blog.title,
             author: blog.author,
             url: blog.url,
             likes: blog.likes + 1,
+            comments: blog.comments
+        }
+
+        const currentBlog = await blogService.update(updatedBlog, id)
+
+        dispatch({
+            type: 'UPDATE_BLOG',
+            data: currentBlog
+        })
+
+        dispatch(sortBlogs())
+    }
+}
+
+export const commentBlog = (blog, id, comment) => {
+    return async dispatch => {
+        const updatedBlog = {
+            title: blog.title,
+            author: blog.author,
+            url: blog.url,
+            likes: blog.likes,
+            comments: blog.comments.concat(comment)
         }
 
         const currentBlog = await blogService.update(updatedBlog, id)

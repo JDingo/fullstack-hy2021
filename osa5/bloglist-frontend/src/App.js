@@ -13,7 +13,7 @@ import Users from './components/Users'
 import Togglable from './components/Togglable'
 
 import { setNotification } from './reducers/notificationReducer'
-import { initializeBlogs, newBlog, updateBlog, deleteBlog } from './reducers/blogReducer'
+import { initializeBlogs, newBlog, deleteBlog, likeBlog, commentBlog } from './reducers/blogReducer'
 import { checkLocalLogin, login, logout } from './reducers/loginReducer'
 import { initializeUsers } from './reducers/userReducer'
 import User from './components/User'
@@ -94,7 +94,7 @@ const App = () => {
 
         try {
             const likedBlog = blogs.find(blog => blog.id === blogId)
-            dispatch(updateBlog(likedBlog, blogId))
+            dispatch(likeBlog(likedBlog, blogId))
         } catch (exception) {
             dispatch(setNotification({ message: 'Couldn\'t update blog', type: 'error' }))
         }
@@ -114,6 +114,18 @@ const App = () => {
             history.push('/')
         } catch (exception) {
             dispatch(setNotification({ message: 'Couldn\'t delete blog', type: 'error' }))
+        }
+    }
+
+    const uploadComment = (event, comment) => {
+        event.preventDefault()
+        const blogId = event.target.id
+
+        try {
+            const commentedBlog = blogs.find(blog => blog.id === blogId)
+            dispatch(commentBlog(commentedBlog, blogId, comment))
+        } catch (exception) {
+            dispatch(setNotification({ message: 'Couldn\'t update blog', type: 'error' }))
         }
     }
 
@@ -146,7 +158,7 @@ const App = () => {
                         <Notification />
                         <Switch>
                             <Route path="/blogs/:id">
-                                <BlogInfo blog={inspectedBlog} handleLike={updateLike} username={user.username} handleDelete={handleDelete} />
+                                <BlogInfo blog={inspectedBlog} handleLike={updateLike} username={user.username} handleDelete={handleDelete} handleComment={uploadComment} />
                             </Route>
                             <Route path="/users/:id">
                                 <User user={inspectedUser} />
