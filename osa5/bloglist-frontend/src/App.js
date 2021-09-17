@@ -118,16 +118,12 @@ const App = () => {
     }
 
     const padding = {
-        padding: 5
+        padding: 5,
+        backgroundColor: 'lightgray'
     }
 
     return (
         <div>
-            <div>
-                <Link style={padding} to="/">Home</Link>
-                <Link style={padding} to="/users">Users</Link>
-            </div>
-
             <div>
                 {user === null ?
                     <div>
@@ -142,13 +138,15 @@ const App = () => {
                     </div>
                     :
                     <div>
+                        <div style={padding}>
+                            <Link style={padding} to="/">Blogs</Link>
+                            <Link style={padding} to="/users">Users</Link>
+                            {user.name} logged in <button onClick={handleLogout}>Log out</button>
+                        </div>
                         <Notification />
-                        <h2>Blogs</h2>
-                        <p>{user.name} logged in <button onClick={handleLogout}>Log out</button></p>
-
                         <Switch>
                             <Route path="/blogs/:id">
-                                <BlogInfo blog={inspectedBlog} handleLike={updateLike} username={user.username} handleDelete={handleDelete}/>
+                                <BlogInfo blog={inspectedBlog} handleLike={updateLike} username={user.username} handleDelete={handleDelete} />
                             </Route>
                             <Route path="/users/:id">
                                 <User user={inspectedUser} />
@@ -157,6 +155,7 @@ const App = () => {
                                 <Users users={users} />
                             </Route>
                             <Route path="/">
+                                <h2>Blogs</h2>
                                 <div>
                                     <Togglable buttonLabel='Create new blog' ref={blogFormRef}>
                                         <BlogForm
@@ -165,7 +164,7 @@ const App = () => {
                                     </Togglable>
                                     <div>
                                         {blogs.map(blog =>
-                                            <Blog key={blog.id} blog={blog}/>
+                                            <Blog key={blog.id} blog={blog} />
                                         )}
                                     </div>
                                 </div>
