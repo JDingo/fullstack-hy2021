@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
-    BrowserRouter as Router,
-    Switch, Route, Link
+    Switch, Route, Link, useRouteMatch
 } from 'react-router-dom'
 
 import Notification from './components/Notification'
@@ -17,6 +16,7 @@ import { setNotification } from './reducers/notificationReducer'
 import { initializeBlogs, newBlog, updateBlog, deleteBlog } from './reducers/blogReducer'
 import { checkLocalLogin, login, logout } from './reducers/loginReducer'
 import { initializeUsers } from './reducers/userReducer'
+import User from './components/User'
 
 
 const App = () => {
@@ -27,6 +27,7 @@ const App = () => {
 
     const blogs = useSelector(store => store.blogs)
     const user = useSelector(store => store.login)
+    const users = useSelector(store => store.users)
 
     useEffect(() => {
         dispatch(initializeBlogs())
@@ -39,6 +40,11 @@ const App = () => {
     useEffect(() => {
         dispatch(initializeUsers())
     }, [dispatch])
+
+    const match = useRouteMatch('/users/:id')
+    const inspectedUser = match
+        ? users.find(user => user.id === match.params.id)
+        : null
 
     const handleLogin = (event) => {
         event.preventDefault()
@@ -106,13 +112,11 @@ const App = () => {
     }
 
     return (
-        <Router>
+        <div>
             <div>
                 <Link style={padding} to="/">Home</Link>
                 <Link style={padding} to="/users">Users</Link>
             </div>
-
-
 
             <div>
                 {user === null ?
@@ -133,8 +137,11 @@ const App = () => {
                         <p>{user.name} logged in <button onClick={handleLogout}>Log out</button></p>
 
                         <Switch>
+                            <Route path="/users/:id">
+                                <User user={inspectedUser} />
+                            </Route>
                             <Route path="/users">
-                                <Users />
+                                <Users users={users} />
                             </Route>
                             <Route path="/">
                                 <div>
@@ -154,7 +161,7 @@ const App = () => {
                     </div>
                 }
             </div >
-        </Router >
+        </div>
 
     )
 }
