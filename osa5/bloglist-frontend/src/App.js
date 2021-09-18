@@ -19,6 +19,49 @@ import { initializeUsers } from './reducers/userReducer'
 import User from './components/User'
 import BlogInfo from './components/BlogInfo'
 
+import styled from 'styled-components'
+
+const Page = styled.div`
+        padding: 1em;
+        font-family: 'Roboto', sans-serif;
+        background: WhiteSmoke;
+    `
+
+const Navigation = styled.div`
+        display: flex;
+        background: LightSteelBlue;
+        padding: 1em;
+        justify-content: flex-start;
+    `
+
+const LoginInfo = styled.div`
+        margin-left: auto;
+    `
+
+const StyledLink = styled(Link)`
+        color: DarkBlue;
+    `
+
+const Button = styled.button`
+        font-size: 1em;
+        background: White;
+        border: 2px solid AliceBlue;
+        border-radius: 3px;
+    `
+
+const StyledBlog = styled(Blog)`
+    padding: 5px;
+    background: AliceBlue;
+    border: 2px solid LightSteelBlue;
+    margin-top: 5px
+`
+
+/* const blogStyle = {
+    borderStyle: 'solid',
+    borderRadius: '3px',
+    padding: '5px',
+    margin: '5px'
+} */
 
 const App = () => {
     const dispatch = useDispatch()
@@ -130,12 +173,11 @@ const App = () => {
     }
 
     const padding = {
-        padding: 5,
-        backgroundColor: 'lightgray'
+        padding: 5
     }
 
     return (
-        <div>
+        <Page>
             <div>
                 {user === null ?
                     <div>
@@ -150,11 +192,11 @@ const App = () => {
                     </div>
                     :
                     <div>
-                        <div style={padding}>
-                            <Link style={padding} to="/">Blogs</Link>
-                            <Link style={padding} to="/users">Users</Link>
-                            {user.name} logged in <button onClick={handleLogout}>Log out</button>
-                        </div>
+                        <Navigation>
+                            <StyledLink style={padding} to="/">Blogs</StyledLink>
+                            <StyledLink style={padding} to="/users">Users</StyledLink>
+                            <LoginInfo><strong>{user.name}</strong> logged in <Button onClick={handleLogout}>Log out</Button></LoginInfo>
+                        </Navigation>
                         <Notification />
                         <Switch>
                             <Route path="/blogs/:id">
@@ -176,7 +218,7 @@ const App = () => {
                                     </Togglable>
                                     <div>
                                         {blogs.map(blog =>
-                                            <Blog key={blog.id} blog={blog} />
+                                            <StyledBlog key={blog.id} blog={blog} className='blog' />
                                         )}
                                     </div>
                                 </div>
@@ -185,7 +227,7 @@ const App = () => {
                     </div>
                 }
             </div >
-        </div>
+        </Page>
 
     )
 }

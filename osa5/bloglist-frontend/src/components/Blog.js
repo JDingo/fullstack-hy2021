@@ -3,20 +3,13 @@ import '../index.css'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
-const Blog = ({ blog }) => {
-    const blogStyle = {
-        borderStyle: 'solid',
-        borderRadius: '3px',
-        padding: '5px',
-        margin: '5px'
-    }
-
+const Blog = ({ blog, className }) => {
     Blog.propTypes = {
         blog: PropTypes.object.isRequired,
     }
 
     return (
-        <div style={blogStyle} className="blog">
+        <div className={className}>
             <Link to={`/blogs/${blog.id}`}>{blog.title} By {blog.author}</Link>
         </div>
     )
