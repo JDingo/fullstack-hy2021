@@ -16,11 +16,11 @@ let authors = [
     id: "afa5b6f1-344d-11e9-a414-719c6709cf3e",
     born: 1821
   },
-  { 
+  {
     name: 'Joshua Kerievsky', // birthyear not known
     id: "afa5b6f2-344d-11e9-a414-719c6709cf3e",
   },
-  { 
+  {
     name: 'Sandi Metz', // birthyear not known
     id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
   },
@@ -59,7 +59,7 @@ let books = [
     author: 'Joshua Kerievsky',
     id: "afa5de01-344d-11e9-a414-719c6709cf3e",
     genres: ['refactoring', 'patterns']
-  },  
+  },
   {
     title: 'Practical Object-Oriented Design, An Agile Primer Using Ruby',
     published: 2012,
@@ -87,15 +87,23 @@ const typeDefs = gql`
   type Book {
     title: String!
     published: Int!
-    author: String!
-    id: String!
+    author: Author!
+    id: ID!
     genres: [String!]
+  }
+
+  type Author {
+    name: String!
+    id: ID!
+    born: Int!
+    bookCount: String
   }
 
   type Query {
     bookCount: Int!
     authorCount: Int!
     allBooks: [Book!]!
+    allAuthors: [Author!]!
   }
 `
 
@@ -103,7 +111,12 @@ const resolvers = {
   Query: {
     bookCount: () => books.length,
     authorCount: () => authors.length,
-    allBooks: () => books
+    allBooks: () => books,
+    allAuthors: () => authors
+  },
+
+  Author: {
+    bookCount: (root) => { return books.reduce((accumulator, currentBook) => (root.name === currentBook.author) ? accumulator + 1 : accumulator, 0) }
   }
 }
 
