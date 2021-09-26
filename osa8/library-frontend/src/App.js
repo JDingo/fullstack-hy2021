@@ -14,7 +14,7 @@ const App = () => {
   useEffect(() => {
     console.log(authorData)
     console.log(bookData)
-  }, [authorData])
+  }, [authorData, bookData])
 
   return (
     <div>
