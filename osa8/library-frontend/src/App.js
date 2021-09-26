@@ -4,15 +4,17 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 
-import { ALL_AUTHORS } from './query'
+import { ALL_AUTHORS, ALL_BOOKS } from './query'
 
 const App = () => {
   const [page, setPage] = useState('authors')
-  const result = useQuery(ALL_AUTHORS)
+  const authorData = useQuery(ALL_AUTHORS)
+  const bookData = useQuery(ALL_BOOKS)
   
   useEffect(() => {
-    console.log(result)
-  }, [result])
+    console.log(authorData)
+    console.log(bookData)
+  }, [authorData])
 
   return (
     <div>
@@ -24,11 +26,12 @@ const App = () => {
 
       <Authors
         show={page === 'authors'}
-        authors={result.data}
+        authors={authorData.data}
       />
 
       <Books
         show={page === 'books'}
+        books={bookData.data}
       />
 
       <NewBook
