@@ -1,6 +1,7 @@
 import { useMutation } from '@apollo/client'
 import React, { useState } from 'react'
 import { ALL_AUTHORS, EDIT_AUTHOR } from '../query'
+import Select from 'react-select'
 
 const Authors = ({ show, authors }) => {
   if (!show) {
@@ -37,13 +38,13 @@ const Authors = ({ show, authors }) => {
         </tbody>
       </table>
 
-      <AuthorForm />
+      <AuthorForm authors={authorList} />
     </div>
   )
 }
 
-const AuthorForm = () => {
-  const [name, setName] = useState('')
+const AuthorForm = ({ authors }) => {
+  const [name, setName] = useState(null)
   const [birthyear, setBirthyear] = useState('')
 
   const [createPerson] = useMutation(EDIT_AUTHOR, {
@@ -53,19 +54,23 @@ const AuthorForm = () => {
   const submit = async (event) => {
     event.preventDefault()
 
-    createPerson({ variables: { name, setBornTo: Number(birthyear) } })
+    createPerson({ variables: { name: name.value, setBornTo: Number(birthyear) } })
 
-    setName('')
     setBirthyear('')
   }
+
+  const options = authors.map(author => {
+    return { value: author.name, label: author.name }
+  })
 
   return (
     <div>
       <h2>Create new</h2>
       <form onSubmit={submit}>
         <div>
-          Name <input value={name}
-            onChange={({ target }) => setName(target.value)}
+          <Select
+            onChange={setName}
+            options={options}
           />
         </div>
         <div>
@@ -73,7 +78,7 @@ const AuthorForm = () => {
             onChange={({ target }) => setBirthyear(target.value)}
           />
         </div>
-        <button type='submit'>Add!</button>
+        <button type='submit'>Add</button>
       </form>
     </div>
   )
