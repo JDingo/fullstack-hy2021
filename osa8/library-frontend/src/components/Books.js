@@ -37,7 +37,7 @@ const Books = ({ show, books }) => {
   return (
     <div>
       <h2>books</h2>
-
+      <div>{ !genre ? "in all genres" : `in genre ${genre}` }</div>
       <table>
         <tbody>
           <tr>
