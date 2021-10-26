@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { ALL_AUTHORS, EDIT_AUTHOR } from '../query'
 import Select from 'react-select'
 
-const Authors = ({ show, authors }) => {
+const Authors = ({ token, show, authors }) => {
   if (!show) {
     return null
   }
@@ -38,7 +38,7 @@ const Authors = ({ show, authors }) => {
         </tbody>
       </table>
 
-      <AuthorForm authors={authorList} />
+      {!token ? null : <AuthorForm authors={authorList} />}
     </div>
   )
 }
@@ -65,7 +65,7 @@ const AuthorForm = ({ authors }) => {
 
   return (
     <div>
-      <h2>Create new</h2>
+      <h2>Change birthyear</h2>
       <form onSubmit={submit}>
         <div>
           <Select
@@ -73,6 +73,7 @@ const AuthorForm = ({ authors }) => {
             options={options}
           />
         </div>
+        
         <div>
           Birthyear <input value={birthyear}
             onChange={({ target }) => setBirthyear(target.value)}

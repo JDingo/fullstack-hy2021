@@ -67,6 +67,7 @@ const typeDefs = gql`
       username: String!
       favoriteGenre: String!
     ): User
+
     login(
       username: String!
       password: String!
