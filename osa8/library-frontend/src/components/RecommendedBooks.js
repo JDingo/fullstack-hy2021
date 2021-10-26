@@ -1,16 +1,16 @@
 import React from 'react'
 
-const RecommendedBooks = ({ show, books, favoriteGenre }) => {
+const RecommendedBooks = ({ show, books, user }) => {
   if (!show) {
     return null
   }
 
-  const bookList = books.allBooks.filter(book => book.genres.includes(favoriteGenre))
+  const bookList = books.allBooks.filter(book => book.genres.includes(user.favoriteGenre))
 
   return (
     <div>
       <h2>recommendations</h2>
-      <div>books in your favourite genre <strong>{favoriteGenre}</strong></div>
+      <div>books in your favourite genre <strong>{user.favoriteGenre}</strong></div>
       <table>
         <tbody>
           <tr>
