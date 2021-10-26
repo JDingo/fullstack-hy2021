@@ -13,23 +13,32 @@ const App = () => {
   const [token, setToken] = useState(null)
   const [getUser, user] = useLazyQuery(ME)
   const [getRecommended, recommendedBooks] = useLazyQuery(ALL_BOOKS)
+  const [getBooks, bookData] = useLazyQuery(ALL_BOOKS)
 
   const authorData = useQuery(ALL_AUTHORS)
-  const bookData = useQuery(ALL_BOOKS)
 
   const client = useApolloClient()
+
   useEffect(() => {
-    console.log(user)
+    getBooks()
+  }, [])
+
+  useEffect(() => {
     if (user.data !== undefined) {
+      console.log("haha")
       getRecommended({ variables: { genre: user.data.me.favoriteGenre } })
     }
-  }, [user.data])
+  }, [user.data, bookData.data])
 
   const logout = () => {
     setToken(null)
     localStorage.clear()
     client.resetStore()
   }
+
+  console.log(bookData.data)
+  console.log(recommendedBooks.data)
+  console.log(user.data)
 
   return (
     <div>
