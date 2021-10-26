@@ -1,7 +1,6 @@
-
 import React from 'react'
 
-const Books = ({ show, books}) => {
+const Books = ({ show, books }) => {
   if (!show) {
     return null
   }
@@ -30,7 +29,7 @@ const Books = ({ show, books}) => {
           {bookList.map(a =>
             <tr key={a.title}>
               <td>{a.title}</td>
-              <td>{a.author}</td>
+              <td>{a.author.name}</td>
               <td>{a.published}</td>
             </tr>
           )}
