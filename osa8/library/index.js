@@ -218,7 +218,7 @@ const resolvers = {
       return { value: jwt.sign(userForToken, JWT_SECRET) }
     }
   },
-  
+
   Subscription: {
     bookAdded: {
       subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
@@ -244,6 +244,7 @@ const server = new ApolloServer({
   }
 })
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
   console.log(`Server ready at ${url}`)
+  console.log(subscriptionsUrl)
 })
