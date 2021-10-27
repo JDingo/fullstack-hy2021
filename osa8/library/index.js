@@ -1,5 +1,5 @@
 require('dotenv').config()
-const { ApolloServer, UserInputError, AuthenticationError, gql } = require('apollo-server')
+const { ApolloServer, UserInputError, AuthenticationError, gql, PubSub } = require('apollo-server')
 const jwt = require('jsonwebtoken')
 
 const JWT_SECRET = process.env.SECRET
@@ -25,6 +25,8 @@ mongoose.connect(url)
  * Saattaisi olla järkevämpää assosioida kirja ja sen tekijä tallettamalla kirjan yhteyteen tekijän nimen sijaan tekijän id
  * Yksinkertaisuuden vuoksi tallennamme kuitenkin kirjan yhteyteen tekijän nimen
 */
+
+const pubsub = new PubSub()
 
 const typeDefs = gql`
   type Book {
@@ -82,6 +84,10 @@ const typeDefs = gql`
   
   type Token {
     value: String!
+  }
+
+  type Subscription {
+    bookAdded: Book!
   }
 `
 
@@ -166,6 +172,8 @@ const resolvers = {
         })
       }
 
+      pubsub.publish('BOOK_ADDED', { bookAdded: book })
+
       return book
     },
 
@@ -208,6 +216,12 @@ const resolvers = {
       }
 
       return { value: jwt.sign(userForToken, JWT_SECRET) }
+    }
+  },
+  
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
     }
   }
 }
