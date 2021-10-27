@@ -1,6 +1,7 @@
 require('dotenv').config()
 const { ApolloServer, UserInputError, AuthenticationError, gql, PubSub } = require('apollo-server')
 const jwt = require('jsonwebtoken')
+const DataLoader = require('dataloader')
 
 const JWT_SECRET = process.env.SECRET
 
@@ -10,6 +11,15 @@ const Author = require('./models/author')
 const User = require('./models/user')
 
 const url = process.env.MONGODB_URI
+
+const batchGetBooksByAuthor = async (keys) => {
+  const books = await Book.find({}).populate('author')
+
+  const result = keys.map((authorName) => books.filter(book => book.author.name === authorName))
+  return result
+}
+
+const bookLoader = new DataLoader(batchGetBooksByAuthor)
 
 console.log('connecting to', url)
 
@@ -129,10 +139,8 @@ const resolvers = {
   },
 
   Author: {
-    bookCount: async (root) => {
-      const books = await Book
-        .find({})
-        .populate('author')
+    bookCount: async (root, args, context) => {
+      const books = await context.loaders.author.load(root.name)
 
       return books.reduce((accumulator, currentBook) => (root.name === currentBook.author.name) ? accumulator + 1 : accumulator, 0)
     }
@@ -239,8 +247,10 @@ const server = new ApolloServer({
 
       const currentUser = await User
         .findById(decodedToken.id)
-      return { currentUser }
+      return { currentUser, loaders: { author: bookLoader } }
     }
+
+    return { loaders: { author: bookLoader } }
   }
 })
 

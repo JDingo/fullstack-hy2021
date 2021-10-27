@@ -44,7 +44,6 @@ const App = () => {
 
   useEffect(() => {
     if (user.data !== undefined) {
-      console.log("haha")
       getRecommended({ variables: { genre: user.data.me.favoriteGenre } })
     }
   }, [user.data, bookData.data])
@@ -54,10 +53,6 @@ const App = () => {
     localStorage.clear()
     client.resetStore()
   }
-
-  console.log(bookData.data)
-  console.log(recommendedBooks.data)
-  console.log(user.data)
 
   return (
     <div>
