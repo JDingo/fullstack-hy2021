@@ -1,0 +1,21 @@
+{
+  "name": "first-steps",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "ts-node": "ts-node",
+    "calculateBmi": "ts-node bmiCalculator.ts"
+  },
+  "author": "Juho Duong",
+  "license": "MIT",
+  "devDependencies": {
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "@types/node": "^16.11.6",
+    "tslib": "^2.3.1"
+  }
+}
