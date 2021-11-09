@@ -27,8 +27,8 @@ const parseArgumentsExercise = (args: Array<string>): ExerciseValues => {
     }
   })
 
-  const target = tempArray[0]
-  const dailyExerciseArray = tempArray.slice(1)
+  const target = tempArray[0];
+  const dailyExerciseArray = tempArray.slice(1);
 
   return {
     target,
@@ -46,7 +46,7 @@ const calculateExercises = (target: number, dailyExerciseArray: Array<number>) =
       2;
   const ratingDescription = rating == 1 ? 'Room to improve' :
     rating == 2 ? 'Doing good' :
-      'Excellent work'
+      'Excellent work';
 
   const result: Result = {
     periodLength,
@@ -62,12 +62,12 @@ const calculateExercises = (target: number, dailyExerciseArray: Array<number>) =
 }
 
 try {
-  const { target, dailyExerciseArray } = parseArgumentsExercise(process.argv)
-  calculateExercises(target, dailyExerciseArray)
+  const { target, dailyExerciseArray } = parseArgumentsExercise(process.argv);
+  calculateExercises(target, dailyExerciseArray);
 } catch (error: unknown) {
-  let errorMessage = 'Error!'
+  let errorMessage = 'Error!';
   if (error instanceof Error) {
-    errorMessage += ' Error:' + error.message
+    errorMessage += ' Error:' + error.message;
   }
-  console.log(errorMessage)
+  console.log(errorMessage);
 }
