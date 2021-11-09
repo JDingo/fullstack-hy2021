@@ -8,27 +8,27 @@ interface Result {
   average: number;
 }
 
-interface ExerciseValues {
-  target: number;
-  dailyExerciseArray: Array<number>;
-}
+export const parseArgumentsExercise = (targetValue: unknown, numberArray: Array<unknown>) => {
+  if (!targetValue || !numberArray) {
+    throw { "error": "parameters missing" };
+  }
 
-const parseArgumentsExercise = (args: Array<string>): ExerciseValues => {
-  if (args.length < 3) throw new Error('Not enough arguments');
+  let target: number;
 
-  const numberArray = args.slice(2);
-  const tempArray: number[] = [];
+  if (!isNaN(Number(targetValue))) {
+    target = Number(targetValue);
+  } else {
+    throw { "error": "malformatted parameters" };
+  }
 
+  const dailyExerciseArray: number[] = [];
   numberArray.forEach(value => {
     if (!isNaN(Number(value))) {
-      tempArray.push(Number(value));
+      dailyExerciseArray.push(Number(value));
     } else {
-      throw new Error('Provided values were not numbers!');
+      throw { "error": "malformatted parameters" };
     }
   });
-
-  const target = tempArray[0];
-  const dailyExerciseArray = tempArray.slice(1);
 
   return {
     target,
@@ -36,7 +36,7 @@ const parseArgumentsExercise = (args: Array<string>): ExerciseValues => {
   };
 };
 
-const calculateExercises = (target: number, dailyExerciseArray: Array<number>) => {
+export const calculateExercises = (target: number, dailyExerciseArray: Array<number>) => {
   const periodLength = dailyExerciseArray.length;
   const trainingDays = dailyExerciseArray.reduce((exerciseDays, currentDay) => currentDay == 0 ? exerciseDays : exerciseDays + 1, 0);
   const average = periodLength == 0 ? 0 : dailyExerciseArray.reduce((exerciseDays, currentDay) => currentDay == 0 ? exerciseDays : exerciseDays + currentDay, 0) / periodLength;
@@ -58,10 +58,10 @@ const calculateExercises = (target: number, dailyExerciseArray: Array<number>) =
     average,
   };
 
-  console.log(result);
+  return result;
 };
 
-try {
+/* try {
   const { target, dailyExerciseArray } = parseArgumentsExercise(process.argv);
   calculateExercises(target, dailyExerciseArray);
 } catch (error: unknown) {
@@ -70,4 +70,4 @@ try {
     errorMessage += ' Error:' + error.message;
   }
   console.log(errorMessage);
-}
+} */
