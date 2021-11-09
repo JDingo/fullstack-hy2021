@@ -25,7 +25,7 @@ const parseArgumentsExercise = (args: Array<string>): ExerciseValues => {
     } else {
       throw new Error('Provided values were not numbers!');
     }
-  })
+  });
 
   const target = tempArray[0];
   const dailyExerciseArray = tempArray.slice(1);
@@ -33,8 +33,8 @@ const parseArgumentsExercise = (args: Array<string>): ExerciseValues => {
   return {
     target,
     dailyExerciseArray
-  }
-}
+  };
+};
 
 const calculateExercises = (target: number, dailyExerciseArray: Array<number>) => {
   const periodLength = dailyExerciseArray.length;
@@ -56,10 +56,10 @@ const calculateExercises = (target: number, dailyExerciseArray: Array<number>) =
     ratingDescription,
     target,
     average,
-  }
+  };
 
-  console.log(result)
-}
+  console.log(result);
+};
 
 try {
   const { target, dailyExerciseArray } = parseArgumentsExercise(process.argv);

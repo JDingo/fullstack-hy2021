@@ -17,11 +17,11 @@ export const calculateBmi = (height: number, weight: number): string => {
   } else if (bmi < 40) {
     message = 'Obese (class II)';
   } else {
-    message = 'Obese (class III)'
+    message = 'Obese (class III)';
   }
 
-  return message
-}
+  return message;
+};
 
 /* interface biometricValues {
   height: number;
