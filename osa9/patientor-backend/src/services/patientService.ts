@@ -1,5 +1,5 @@
 import patients from '../../data/patients';
-import { NonSensitivePatientEntry, PatientEntry, NewPatientEntry } from '../types';
+import { NonSensitivePatientEntry, Patient, NewPatientEntry } from '../types';
 import { v1 as uuid } from 'uuid';
 import patientEntries from '../../data/patients';
 
@@ -17,7 +17,7 @@ const getPatient = (id: string): Array<NonSensitivePatientEntry> => {
   return patients.filter(patient => patient.id === id);
 };
 
-const addPatient = ( entry: NewPatientEntry ): PatientEntry => {
+const addPatient = ( entry: NewPatientEntry ): Patient => {
   const id = uuid();
   const newPatient = {
     id,

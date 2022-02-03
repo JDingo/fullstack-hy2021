@@ -1,7 +1,7 @@
 import diagnosisEntries from '../../data/diagnoses';
-import { DiagnosisEntry } from '../types';
+import { Diagnosis } from '../types';
 
-const getDiagnoses = (): Array<DiagnosisEntry> => {
+const getDiagnoses = (): Diagnosis[] => {
   return diagnosisEntries;
 };
 
