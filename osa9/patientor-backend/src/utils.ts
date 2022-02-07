@@ -1,4 +1,4 @@
-import { Gender, NewPatientEntry } from "./types";
+import { Entry, Gender, HealthCheckRating, NewPatientEntry } from "./types";
 
 type Fields = { name: unknown, dateOfBirth: unknown, ssn: unknown, gender: unknown, occupation: unknown };
 const toNewPatientEntry = ({ name, dateOfBirth, ssn, gender, occupation } : Fields ): NewPatientEntry => {
@@ -66,6 +66,40 @@ const parseGender = (gender: unknown): Gender => {
 const isGender = (gender: any): gender is Gender => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   return Object.values(Gender).includes(gender);
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isHealthCheckRating = (rating: any): rating is HealthCheckRating => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  return Object.values(HealthCheckRating).includes(rating);
+};
+
+export const isEntry = (entry: any): Entry => {
+  if (entry.id) {
+    throw new Error("Already defined ID");
+  }
+
+  if (!entry || !entry.description || !entry.date || !entry.specialist ) {
+    throw new Error('Malformed entry');
+  }
+
+  const targetEntry = entry as Entry;
+
+  if (targetEntry.type === "Hospital") {
+    if (isString(targetEntry.discharge.date) && isString(targetEntry.discharge.criteria)) {
+      return targetEntry;
+    }
+  } else if (targetEntry.type === "HealthCheck") {
+    if (isHealthCheckRating(targetEntry.healthCheckRating)) {
+      return targetEntry;
+    }
+  } else if (targetEntry.type === "OccupationalHealthcare") {
+    if (isString(targetEntry.employerName)) {
+      return targetEntry;
+    }
+  }
+
+  throw new Error("Invalid type");
 };
 
 export default toNewPatientEntry;

@@ -1,7 +1,6 @@
 import express, { Request } from 'express';
 import patientService from '../services/patientService';
-import toNewPatientEntry from '../utils';
-
+import toNewPatientEntry, { isEntry } from '../utils';
 
 const router = express.Router();
 
@@ -18,6 +17,21 @@ router.post('/', (req: Request<unknown, unknown, { name: unknown, dateOfBirth: u
     const newPatientEntry = toNewPatientEntry(req.body);
     const addedPatient = patientService.addPatient(newPatientEntry);
     res.json(addedPatient);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(400).send(error.message);
+    }
+    else {
+      res.status(400);
+    }
+  }
+});
+
+router.post('/:id/entries', (req, res) => {
+  try {
+    const newEntry = isEntry(req.body);
+    const addedEntry = patientService.addEntry(newEntry, req.params.id);
+    res.json(addedEntry);
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.status(400).send(error.message);
