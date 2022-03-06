@@ -26,4 +26,15 @@ router.delete('/:id', async (req, res) => {
   }
 })
 
+router.put('/:id', async (req, res) => {
+  try {
+    const blog = await Blog.findByPk(req.params.id)
+    blog.likes = req.body.likes
+    await blog.save()
+    res.json(blog)
+  } catch (error) {
+      res.status(400).send({ error })
+  }
+})
+
 module.exports = router
