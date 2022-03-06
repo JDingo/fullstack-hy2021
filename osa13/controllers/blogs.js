@@ -2,39 +2,36 @@ const router = require('express').Router()
 
 const { Blog } = require('../models')
 
+const blogFinder = async (req, res, next) => {
+  req.blog = await Blog.findByPk(req.params.id)
+  next()
+}
+
 router.get('/', async (req, res) => {
   const blogs = await Blog.findAll()
   res.json(blogs)
 })
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
   try {
     const blog = await Blog.create(req.body)
     res.json(blog)
-  } catch (error) {
-    res.status(400).json({ error })
-  }
+  } catch (error) { next(error) }
 })
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', blogFinder, async (req, res, next) => {
   try {
-    const blog = await Blog.findByPk(req.params.id)
-    await blog.destroy()
+    await req.blog.destroy()
     res.sendStatus(200)
-  } catch (error) {
-    res.status(400).json({ error })
-  }
+  } catch (error) { next(error) }
 })
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', blogFinder, async (req, res, next) => {
   try {
-    const blog = await Blog.findByPk(req.params.id)
-    blog.likes = req.body.likes
-    await blog.save()
-    res.json(blog)
-  } catch (error) {
-      res.status(400).send({ error })
-  }
+    req.blog.likes = req.body.likes
+    await req.blog.save()
+    res.json(req.blog)
+  } catch (error) { next(error) }
 })
 
 module.exports = router
