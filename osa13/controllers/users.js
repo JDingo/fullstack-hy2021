@@ -16,9 +16,12 @@ router.post('/', async (req, res, next) => {
   try {
     const passwordHash = await bcrypt.hash(req.body.password, 10)
     const user = User.build({ ...req.body, passwordHash: passwordHash })
-    user.save()
+    await user.save()
     res.json(user)
-  } catch (error) { next(error) }
+  } catch (error) {
+    next(error)
+    res.status(400).json({ error: error.errors[0].message })
+  }
 })
 
 router.put('/:username', async (req, res, next) => {
