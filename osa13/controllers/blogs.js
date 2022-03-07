@@ -7,9 +7,11 @@ const blogFinder = async (req, res, next) => {
   next()
 }
 
-router.get('/', async (req, res) => {
-  const blogs = await Blog.findAll()
-  res.json(blogs)
+router.get('/', async (req, res, next) => {
+  try {
+    const blogs = await Blog.findAll()
+    res.json(blogs)
+  } catch (error) { next(error) }
 })
 
 router.post('/', async (req, res, next) => {
