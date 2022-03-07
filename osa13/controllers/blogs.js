@@ -1,6 +1,8 @@
 const router = require('express').Router()
 
-const { Blog } = require('../models')
+const { Blog, User } = require('../models')
+
+const { tokenExtractor } = require('../util/middleware')
 
 const blogFinder = async (req, res, next) => {
   req.blog = await Blog.findByPk(req.params.id)
@@ -14,16 +16,22 @@ router.get('/', async (req, res, next) => {
   } catch (error) { next(error) }
 })
 
-router.post('/', async (req, res, next) => {
+router.post('/', tokenExtractor, async (req, res, next) => {
   try {
-    const blog = await Blog.create(req.body)
+    const user = await User.findByPk(req.decodedToken.id)
+    const blog = await Blog.create({ ...req.body, userId: user.id, date: new Date() })
     res.json(blog)
   } catch (error) { next(error) }
 })
 
-router.delete('/:id', blogFinder, async (req, res, next) => {
+router.delete('/:id', blogFinder, tokenExtractor, async (req, res, next) => {
   try {
-    await req.blog.destroy()
+    if (req.blog.userId === req.decodedToken.id) {
+      await req.blog.destroy()
+    } else {
+      res.status(401).json({ "error": "Unauthorized" })
+    }
+    
     res.sendStatus(200)
   } catch (error) { next(error) }
 })

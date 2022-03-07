@@ -1,3 +1,6 @@
+const jwt = require('jsonwebtoken')
+const { SECRET } = require('./config')
+
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
   next(error)
@@ -5,7 +8,7 @@ const errorHandler = (error, request, response, next) => {
 
 const tokenExtractor = (req, res, next) => {
   const authorization = req.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('beare ')) {
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
     try {
       console.log(authorization.substring(7))
       req.decodedToken = jwt.verify(authorization.substring(7), SECRET)
