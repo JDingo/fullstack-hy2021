@@ -13,24 +13,32 @@ const blogFinder = async (req, res, next) => {
 router.get('/', async (req, res, next) => {
   const where = {}
 
-  if ( req.query.search ) {
-    where.title = {
-      [Op.iLike]: req.query.search ? `%${req.query.search}%` : ''
+  if (req.query.search) {
+    titleQuery = { [Op.iLike]: req.query.search ? `%${req.query.search}%` : '' }
+    authorQuery = { [Op.iLike]: req.query.search ? `%${req.query.search}%` : '' }
+
+    Object.assign(where, {
+      [Op.or]: [
+        { title: titleQuery },
+        { author: authorQuery },
+      ]
     }
+    )
   }
 
-  try {
-    const blogs = await Blog.findAll({
-      attributes: { exclude: ['userId'] },
-      include: {
-        model: User,
-        attributes: { exclude: ['id', 'passwordHash', 'createdAt', 'updatedAt'] }
-      },
-      where
-    })
-    res.json(blogs)
-  } catch (error) { next(error) }
-})
+
+    try {
+      const blogs = await Blog.findAll({
+        attributes: { exclude: ['userId'] },
+        include: {
+          model: User,
+          attributes: { exclude: ['id', 'passwordHash', 'createdAt', 'updatedAt'] }
+        },
+        where
+      })
+      res.json(blogs)
+    } catch (error) { next(error) }
+  })
 
 router.post('/', tokenExtractor, async (req, res, next) => {
   try {
@@ -47,7 +55,7 @@ router.delete('/:id', blogFinder, tokenExtractor, async (req, res, next) => {
     } else {
       res.status(401).json({ "error": "Unauthorized" })
     }
-    
+
     res.sendStatus(200)
   } catch (error) { next(error) }
 })
