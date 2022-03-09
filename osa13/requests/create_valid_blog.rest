@@ -3,7 +3,7 @@ Content-Type: application/json
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlZhbGlkRW1haWxARW1haWxQcm92aWRlci5lbSIsImlkIjoyLCJpYXQiOjE2NDY2NjI5NjB9.CYt87u_zwVWFWY7rH3XTlroLSiY-Kwu4U_gXaGaERrk
 
 {
-    "author": "Authorized Author",
-    "url": "Token.test",
-    "title": "Testing Tokens"
+    "author": "Johan Runeberg",
+    "url": "Maam.me",
+    "title": "Vårt Land"
 }
