@@ -24,6 +24,15 @@ Blog.init({
   likes: {
     type: DataTypes.INTEGER,
     defaultValue: 0
+  },
+  year: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    default: false,
+    validate: {
+      min: 1991,
+      max: 2022
+    }
   }
 },
   {

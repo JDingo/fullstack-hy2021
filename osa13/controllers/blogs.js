@@ -27,28 +27,32 @@ router.get('/', async (req, res, next) => {
   }
 
 
-    try {
-      const blogs = await Blog.findAll({
-        attributes: { exclude: ['userId'] },
-        include: {
-          model: User,
-          attributes: { exclude: ['id', 'passwordHash', 'createdAt', 'updatedAt'] }
-        },
-        order: [
-          ['likes', 'DESC']
-        ],
-        where
-      })
-      res.json(blogs)
-    } catch (error) { next(error) }
-  })
+  try {
+    const blogs = await Blog.findAll({
+      attributes: { exclude: ['userId'] },
+      include: {
+        model: User,
+        attributes: { exclude: ['id', 'passwordHash', 'createdAt', 'updatedAt'] }
+      },
+      order: [
+        ['likes', 'DESC']
+      ],
+      where
+    })
+    res.json(blogs)
+  } catch (error) { next(error) }
+})
 
 router.post('/', tokenExtractor, async (req, res, next) => {
   try {
     const user = await User.findByPk(req.decodedToken.id)
     const blog = await Blog.create({ ...req.body, userId: user.id, date: new Date() })
     res.json(blog)
-  } catch (error) { next(error) }
+  } catch (error) {
+    next(error)
+    res.status(400).json({ error: error.errors[0].message })
+  }
+
 })
 
 router.delete('/:id', blogFinder, tokenExtractor, async (req, res, next) => {

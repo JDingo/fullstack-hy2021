@@ -1,9 +1,10 @@
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlZhbGlkRW1haWxARW1haWxQcm92aWRlci5lbSIsImlkIjoxLCJpYXQiOjE2NDczMjk0MjV9.eIJMLazyZUCeil7DAbXjP4L_9p3WRMx4vXoiIzbbSzQ
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlZhbGlkRW1haWxARW1haWxQcm92aWRlci5lbSIsImlkIjoxLCJpYXQiOjE2NDczMzAwNzZ9.l5KOn8gYkagy0sd9t52o25uwSv4ejxt_r5JdAWW1puY
 
 {
     "author": "Johan Runeberg",
     "url": "Maam.me",
-    "title": "Vänrikki Stoolin Tarinat"
+    "title": "Vänrikki Stoolin Tarinat",
+    "year": 2012
 }
