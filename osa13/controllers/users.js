@@ -1,18 +1,44 @@
 const router = require('express').Router()
 const bcrypt = require('bcrypt')
 
-const { User, Blog } = require('../models')
+const { User, Blog, ReadingList } = require('../models')
 
 router.get('/', async (req, res, next) => {
   try {
     const users = await User.findAll({
       attributes: { exclude: ['passwordHash'] },
-      include: {
+      include: [{
         model: Blog,
-        attributes: { exclude: ['userId'] }
+        attributes: { exclude: ['createdAt, updatedAt', 'userId'] },
       }
+      ]
     })
     res.json(users)
+  } catch (error) { next(error) }
+})
+
+router.get('/:id', async (req, res, next) => {
+  try {
+    const user = await User.findOne({
+      where: {
+        id: req.params.id
+      },
+      attributes: { exclude: ['passwordHash'] },
+      include: [{
+        model: Blog,
+        attributes: { exclude: ['createdAt, updatedAt', 'userId'] },
+      },
+      {
+        model: Blog,
+        as: 'readings',
+        attributes: { exclude: ['createdAt, updatedAt', 'userId'] },
+        through: {
+          attributes: ['readStatus', 'id']
+        }
+      }]
+    })
+
+    res.json(user)
   } catch (error) { next(error) }
 })
 
