@@ -18,6 +18,12 @@ router.get('/', async (req, res, next) => {
 })
 
 router.get('/:id', async (req, res, next) => {
+  const where = {}
+
+  if (req.query.read) {
+    where.readStatus = req.query.read
+  }
+
   try {
     const user = await User.findOne({
       where: {
@@ -33,8 +39,9 @@ router.get('/:id', async (req, res, next) => {
         as: 'readings',
         attributes: { exclude: ['createdAt, updatedAt', 'userId'] },
         through: {
-          attributes: ['readStatus', 'id']
-        }
+          attributes: ['readStatus', 'id'],
+          where
+        },
       }]
     })
 
