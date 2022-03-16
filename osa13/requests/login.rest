@@ -2,6 +2,6 @@ POST http://localhost:3001/api/login
 Content-Type: application/json
 
 {
-  "username": "ValidEmail@EmailProvider.em",
-  "password": "sapo"
+  "username": "Aaa@Eee.Ooo",
+  "password": "aeo"
 }

@@ -2,7 +2,7 @@ POST http://localhost:3001/api/users
 Content-Type: application/json
 
 {
-    "username": "ValidEmail@EmailProvider.em",
-    "name": "Emailer",
-    "password": "sapo"
+    "username": "Aaa@Eee.Ooo",
+    "name": "Aeo",
+    "password": "aeo"
 }
