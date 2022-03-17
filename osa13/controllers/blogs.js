@@ -3,7 +3,7 @@ const router = require('express').Router()
 const { Op } = require('sequelize')
 const { Blog, User } = require('../models')
 
-const { tokenExtractor } = require('../util/middleware')
+const { tokenExtractor, tokenValidator, userStatusValidator } = require('../util/middleware')
 
 const blogFinder = async (req, res, next) => {
   req.blog = await Blog.findByPk(req.params.id)
@@ -43,7 +43,7 @@ router.get('/', async (req, res, next) => {
   } catch (error) { next(error) }
 })
 
-router.post('/', tokenExtractor, async (req, res, next) => {
+router.post('/', tokenExtractor, tokenValidator, userStatusValidator, async (req, res, next) => {
   try {
     const user = await User.findByPk(req.decodedToken.id)
     const blog = await Blog.create({ ...req.body, userId: user.id, date: new Date() })
@@ -55,12 +55,12 @@ router.post('/', tokenExtractor, async (req, res, next) => {
 
 })
 
-router.delete('/:id', blogFinder, tokenExtractor, async (req, res, next) => {
+router.delete('/:id', blogFinder, tokenExtractor, tokenValidator, userStatusValidator, async (req, res, next) => {
   try {
     if (req.blog.userId === req.decodedToken.id) {
       await req.blog.destroy()
     } else {
-      res.status(401).json({ "error": "Unauthorized" })
+      res.status(401).json({ error: error.errors[0].message })
     }
 
     res.sendStatus(200)

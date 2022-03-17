@@ -1,10 +1,10 @@
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFhYUBFZWUuT29vIiwiaWQiOjMsImlhdCI6MTY0NzQ0MDEwOX0.ncBQY73Yu1IvnzHuMsxSDpB345VE2lfVNww3GHwwllk
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFhYUBFZWUuT29vIiwiaWQiOjMsImlhdCI6MTY0NzUyOTIwOH0.r9BvusUHVniDnuocCalFsFU0N9HgTIUPga8Z98pgg3o
 
 {
-    "author": "Dummy",
-    "url": "asd.asd",
-    "title": "Blog",
-    "year": 1991
+    "author": "Error",
+    "url": "valid.asd",
+    "title": "Disabled accounts",
+    "year": 2011
 }
